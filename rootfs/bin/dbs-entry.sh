@@ -32,12 +32,12 @@ export KEEP_MONTHES=${DBS_KEEP_MONTHES-${KEEP_MONTHES:-"0"}}
 export KEEP_LOGS=${DBS_KEEP_LOGS-${KEEP_LOGS:-"7"}}
 export DBNAMES="${DBS_DBNAMES-${DBS_DB_NAMES-${DBNAMES-${DB_NAMES:-"all"}}}}"
 export RUNAS=${DBS_RUNAS-${RUNAS:-""}}
-if ( echo $BACKUP_TYPE | egrep -iq "pgrouting|postgis|post" );then
+if ( echo $BACKUP_TYPE | grep -E -iq "pgrouting|postgis|post" );then
     export PASSWORD="${DBS_PASSWORD-${PASSWORD:-${POSTGRES_PASSWORD:-${PGPASSWORD:-${POSTGRESQL_PASSWORD-}}}}}"
     export HOST="${DBS_HOST-${HOST:-${POSTGRES_HOST:-${PGHOST:-${POSTGRESQL_HOST-}}}}}"
     export DBUSER="${DBS_DBUSER-${DBUSER:-${POSTGRES_USER:-${POSTGRESQL_USER}}}}"
     export PORT=${DBS_PORT-${PORT-5432}}
-elif ( echo $BACKUP_TYPE | egrep -iq mysql );then
+elif ( echo $BACKUP_TYPE | grep -E -iq mysql );then
     export HOST="${DBS_HOST-${HOST:-${MYSQL_HOST:-${MYSQLHOST-}}}}"
     export PORT=${DBS_PORT-${PORT-3306}}
     export PASSWORD="${DBS_PASSWORD-${PASSWORD:-${MYSQL_PASSWORD}}}"
