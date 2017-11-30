@@ -1,0 +1,1 @@
+RUN sh -exc 'NONINTERACTIVE=1 WANT_UPDATE=1 cops_pkgmgr_install.sh xz jq'
