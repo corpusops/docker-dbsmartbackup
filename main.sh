@@ -686,7 +686,7 @@ load_all_batched_images() {
     fi
 }
 
-#  [FORCE_REBUILD="" DOCKER_RELEASER="" DOCKER_PASSWORD="" DO_RELEASE=""] build $args: refresh images files
+#  [DOCKER_BUILD_ARGS=] [FORCE_REBUILD="" DOCKER_RELEASER="" DOCKER_PASSWORD="" DO_RELEASE=""] build $args: refresh images files
 #     build:  (no arg) refresh all images
 #     build library/ubuntu: only refresh ubuntu images
 #     build library/ubuntu/latest: only refresh ubuntu:latest image
