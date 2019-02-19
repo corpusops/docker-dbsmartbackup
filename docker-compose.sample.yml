@@ -5,7 +5,6 @@ x-setup:
     POSTGRES_DB: db
     POSTGRES_USER: someuser
     # to force user/password:
-    # DBUSER: superman
     # PASSWORD: secret
   myenv: &myenv
     MYSQL_USER: someuser
@@ -22,19 +21,23 @@ services:
     image: corpusops/dbsmartbackup:mysql-5
     environment:
       <<: [ *myenv ]
-      BACKUP_TYPE: "mysql"
-      DBS_PERIODICITY: "0 3 * * *"
+      HOST: "mysql"
+      DBNAMES: "db"
+      # BACKUP_TYPE: "mysql"
+      # DBS_PERIODICITY: "0 3 * * *"
+      # user launching command
+      # DBS_USER: "root"
+      # DBS_COMMAND: "/usr/local/bin/run_dbsmartbackup.sh --quiet --no-colors"
       # to save all databases
       # DBNAMES: "all"
-      HOST: "mysql"
-      PORT: "3306"
-      DBNAMES: "db"
-      RUNAS: ""
-      KEEP_LASTS: "1"
-      KEEP_DAYS: "2"
-      KEEP_WEEKS: "0"
-      KEEP_MONTHES: "0"
-      KEEP_LOGS: "7"
+      # DBUSER: "superman"
+      # PORT: "3306"
+      # KEEP_LASTS: "1"
+      # KEEP_DAYS: "2"
+      # KEEP_WEEKS: "0"
+      # KEEP_MONTHES: "0"
+      # KEEP_LOGS: "7"
+      # RUNAS: "foobar"
   pgsql:
     environment:
       <<: [ *pgenv ]
@@ -42,21 +45,9 @@ services:
   mypostgresql_dbbackup:
     volumes: ["db-backup:/srv/backups"]
     image: corpusops/dbsmartbackup:postgres-10
-    #export RUNAS="$$(whoami)"
     environment:
       <<: [ *pgenv ]
-      BACKUP_TYPE: "postgresql"
-      DBS_PERIODICITY: "0 3 * * *"
       HOST: "pgsql"
-      PORT: "5432"
       DBNAMES: "db"
-      # to save all databases
-      # DBNAMES: "all"
-      RUNAS: ""
-      KEEP_LASTS: "1"
-      KEEP_DAYS: "2"
-      KEEP_WEEKS: "0"
-      KEEP_MONTHES: "0"
-      KEEP_LOGS: "7"
 volumes:
   db-backup:

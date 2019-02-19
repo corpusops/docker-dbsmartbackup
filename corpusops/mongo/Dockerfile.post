@@ -1,0 +1,2 @@
+ENV BACKUP_TYPE=mongo
+

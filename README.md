@@ -20,5 +20,10 @@
 - a volume mapped to ``/srv/backups`` to store backups
 
 ### Configuring the app
-- if NO_AUTO_PASSWORD is set, PGPASSWORD and PGUSER wont be set with the valmues of PGUSER or PASSWORD if set, see [rootfs/entry.sh](./rootfs/entry.sh)
+- For defaults, read the image [entry point](./rootfs/bin/dbs-entry.sh)
+    - We try to made sensible defaults (most important, default periodicity is
+      each day at 3am. We keep only 2 backups (as we assume you also do
+      daily files backup of the volumes.
+    - if NO_AUTO_PASSWORD is set, PGPASSWORD and PGUSER wont be set with the valmues of PGUSER or PASSWORD if set, see [rootfs/entry.sh](./rootfs/entry.sh)
+    - ``BACKUP_TYPE`` env var is automatically set, but you can ofcourse override it
 - [docker-compose example usage](./docker-compose.sample.yml)

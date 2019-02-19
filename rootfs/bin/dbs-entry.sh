@@ -8,7 +8,6 @@ if [ "x${BACKUP_TYPE}" = "x" ];then
     log "no \$BACKUP_TYPE"
     exit 1
 fi
-export PORT="${PORT-}"
 export DBS_SUPERVISORD_CONFIGS="${DBS_SUPERVISORD_CONFIGS:-"/etc/supervisor.d/rsyslog /etc/supervisor.d/cron"}"
 export SUPERVISORD_CONFIGS="${DBS_SUPERVISORD_CONFIGS}"
 export DBS_PERIODICITY="${DBS_USER:-"0 3 * * *"}"
@@ -19,16 +18,25 @@ export DBS_CRONTAB="${DBS_CRONTAB:-"/conf/templates/crontab.frep"}"
 export DBS_CONF_DEST="${DBS_CONF_DEST:-"/conf/dbs.conf"}"
 export DBS_CONF="${DBS_CONF:-"/conf/templates/conf.frep"}"
 export IS_DCRON="${IS_DCRON-}"
+export KEEP_LASTS=${KEEP_LASTS:-"1"}
+export KEEP_DAYS${KEEP_DAYS:-"2"}
+export KEEP_WEEKS=${KEEP_WEEKS:-"0"}
+export KEEP_MONTHES=${KEEP_MONTHES:-"0"}
+export KEEP_LOGS=${KEEP_LOGS:-"7"}
+export RUNAS=${RUNAS:-""}
 if ( echo $BACKUP_TYPE | grep -iq post );then
     export PASSWORD="${PASSWORD:-${POSTGRES_PASSWORD:-${PGPASSWORD:-${POSTGRES_PASSWORD-}}}}"
     export DBUSER="${DBUSER:-${POSTGRES_USER-}}"
+    export PORT=${PORT-5432}
 elif ( echo $BACKUP_TYPE | grep -iq mysql );then
+    export PORT=${PORT-3306}
     export PASSWORD="${PASSWORD:-${MYSQL_PASSWORD}}"
     export DBUSER="${DBUSER:-${MYSQL_USER-}}"
     if [  "x${NO_AUTO_PORT-}" = "x" ];then
         if [ "x$PORT" != "x"  ];then export MYSQL_PORT="$PORT";fi
     fi
 else
+    export PORT=${PORT}
     export PASSWORD="${PASSWORD-}"
     export DBUSER="${DBUSER-}"
 fi
@@ -44,7 +52,7 @@ if [ "${IS_DCRON}" = "x" ] && [ ! -e /etc/cron.d ];then
 fi
 if [ "x${IS_DCRON}" = "1" ];then
     export CRONTABS_SPOOL="${CRONTABS_SPOOL:-"/etc/crontabs"}"
-    export DBS_CRONTAB_DEST="${DBS_CRONTAB_DEST:-"$CRONTABS_SPOOL/root"}"
+    export DBS_CRONTAB_DEST="${DBS_CRONTAB_DEST:-"$CRONTABS_SPOOL/$DBS_USER"}"
 else
     export CRONTABS_SPOOL="${CRONTABS_SPOOL:-"/etc/cron.d"}"
     export DBS_CRONTAB_DEST="${DBS_CRONTAB_DEST:-"$CRONTABS_SPOOL/dbs"}"

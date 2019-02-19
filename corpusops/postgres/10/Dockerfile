@@ -12,3 +12,4 @@ RUN sh -exc 'if ! (git --version >/dev/null 2>&1 );then \
 ADD rootfs/ /
 ENTRYPOINT ["dbs-entry.sh"]
 CMD []
+ENV BACKUP_TYPE=postgresql
