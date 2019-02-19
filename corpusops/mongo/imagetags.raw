@@ -1,38 +1,38 @@
-2
+2 4
 2.2
 2.4
 2.6
-2.7
 2.8
-3 4
-3-stretch
+3-jessie
 3.0
 3.0-wheezy
-3.1 3-jessie
+3.1
 3.2
 3.2-jessie
 3.3
+3.4
 3.4-jessie
-3.5
+3.5 3-stretch
 3.5-jessie
 3.6
+3.6-jessie
 3.6-stretch
 3.7
 3.7-jessie
 3.7-xenial
 4-bionic
+4-xenial
 4.0
-4.0-bionic
+4.0-bionic 2.7
 4.0-xenial
 4.1
-4.1-bionic 3.4
+4.1-bionic
 4.1-xenial
 bionic
 jessie
 latest 
-unstable
-unstable-bionic 3.6-jessie
+unstable-bionic unstable
 unstable-jessie
 unstable-xenial
 xenial
- 4-xenial
+ 3

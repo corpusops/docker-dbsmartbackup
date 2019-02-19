@@ -1,0 +1,62 @@
+version: "3.7"
+x-setup:
+  pgenv: &pgenv
+    POSTGRES_PASSWORD: SECRET
+    POSTGRES_DB: db
+    POSTGRES_USER: someuser
+    # to force user/password:
+    # DBUSER: superman
+    # PASSWORD: secret
+  myenv: &myenv
+    MYSQL_USER: someuser
+    MYSQL_DATABASE: db
+    MYSQL_ROOT_PASSWORD: SECRET
+    MYSQL_PASSWORD: SECRET
+services:
+  mysql:
+    environment:
+      <<: [ *myenv ]
+    image: corpusops/mysql:5
+  mymysql_dbbackup:
+    volumes: ["db-backup:/srv/backups"]
+    image: corpusops/dbsmartbackup:mysql-5
+    environment:
+      <<: [ *myenv ]
+      BACKUP_TYPE: "mysql"
+      DBS_PERIODICITY: "0 3 * * *"
+      # to save all databases
+      # DBNAMES: "all"
+      HOST: "mysql"
+      PORT: "3306"
+      DBNAMES: "db"
+      RUNAS: ""
+      KEEP_LASTS: "1"
+      KEEP_DAYS: "2"
+      KEEP_WEEKS: "0"
+      KEEP_MONTHES: "0"
+      KEEP_LOGS: "7"
+  pgsql:
+    environment:
+      <<: [ *pgenv ]
+    image: corpusops/postgres:10
+  mypostgresql_dbbackup:
+    volumes: ["db-backup:/srv/backups"]
+    image: corpusops/dbsmartbackup:postgres-10
+    #export RUNAS="$$(whoami)"
+    environment:
+      <<: [ *pgenv ]
+      BACKUP_TYPE: "postgresql"
+      DBS_PERIODICITY: "0 3 * * *"
+      HOST: "pgsql"
+      PORT: "5432"
+      DBNAMES: "db"
+      # to save all databases
+      # DBNAMES: "all"
+      RUNAS: ""
+      KEEP_LASTS: "1"
+      KEEP_DAYS: "2"
+      KEEP_WEEKS: "0"
+      KEEP_MONTHES: "0"
+      KEEP_LOGS: "7"
+volumes:
+  db-backup:

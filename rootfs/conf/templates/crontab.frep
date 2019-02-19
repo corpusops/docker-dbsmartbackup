@@ -1,0 +1,7 @@
+{{ range .Env.DBS_CONF_DESTS | splitList " " }}
+{{ if ( $.Env.IS_DCRON | default "0" ) | eq "0" }}
+{{ $.Env.DBS_PERIODICITY }} {{ $.Env.DBS_USER }} {{ $.Env.DBS_COMMAND }} {{ . }}
+{{ else }}
+{{ $.Env.DBS_PERIODICITY }} {{ $.Env.DBS_COMMAND }} {{ . }}
+{{ end }}
+{{ end }}

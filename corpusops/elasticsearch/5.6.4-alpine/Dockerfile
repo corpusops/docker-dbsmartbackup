@@ -16,5 +16,6 @@ RUN sh -exc 'if ! (git --version >/dev/null 2>&1 );then \
     && cp *sh /usr/local/bin \
     && mkdir /etc/dbsmartbackup \
     && cd / && rm -rf /srv/dbs'
-ENV SUPERVISORD_CONFIGS="/etc/supervisor.d/rsyslog /etc/supervisor.d/cron"
-CMD /bin/supervisord.sh
+ADD rootfs/ /
+ENTRYPOINT ["dbs-entry.sh"]
+CMD []

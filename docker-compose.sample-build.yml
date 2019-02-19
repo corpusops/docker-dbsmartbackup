@@ -1,0 +1,16 @@
+version: "3.7"
+x-dev: &dev
+  volumes:
+    - ./rootfs/bin/dbs-entry.sh:/bin/dbs-entry.sh
+    - ./rootfs/conf/templates:/conf/templates
+services:
+  mypostgresql_dbbackup:
+    <<: [ *dev ]
+    build:
+      dockerfile: corpusops/postgres/10/Dockerfile
+      context: "."
+  mymysql_dbbackup:
+    <<: [ *dev ]
+    build:
+      dockerfile: corpusops/mysql/5/Dockerfile
+      context: "."
