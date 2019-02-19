@@ -2,7 +2,7 @@
 # but cron will make clean envs, just dump environment for it to be reloaded
 # when dbs will be run
 {{ range $var, $val := .Env }}
-export {{ $var }}="{{ $val }}"
+export {{ $var }}='{{ $val }}'
 {{ end }}
 if [ -f "${cfgpath}.local" ];then
     . "${cfgpath}.local"
