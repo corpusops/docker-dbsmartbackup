@@ -2,10 +2,6 @@
 
 - Docker integration for [dbsmartbackup](https://github.com/kiorky/db_smart_backup)
 
-## Support development
-- [paypal](https://paypal.me/kiorky)
-
-
 ## corpusops/dbsmartbackup
 ### Description
 - This repo produces all those docker images except pg10, master, 1, 2 , 3.
