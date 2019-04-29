@@ -8,12 +8,13 @@ if [ "x${BACKUP_TYPE}" = "x" ];then
     log "no \$BACKUP_TYPE"
     exit 1
 fi
+export DO_GLOBAL_BACKUP="${DBS_DO_GLOBAL_BACKUP-${DO_GLOBAL_BACKUP}}"
 export DBS_SUPERVISORD_CONFIGS="${DBS_SUPERVISORD_CONFIGS:-"/etc/supervisor.d/rsyslog /etc/supervisor.d/cron"}"
 export SUPERVISORD_CONFIGS="${DBS_SUPERVISORD_CONFIGS}"
 export DBS_PERIODICITY="${DBS_USER:-"0 3 * * *"}"
 export DBS_USER="${DBS_USER:-"root"}"
 export DBS_COMMAND="${DBS_COMMAND:-"/usr/local/bin/run_dbsmartbackup.sh --quiet --no-colors"}"
-export DBS_AUTOCONF=${DBS_AUTOCONF:-1}
+export DBS_AUTOCONF=${DBS_AUTOCONF-1}
 export DBS_CRONTAB="${DBS_CRONTAB:-"/conf/templates/crontab.frep"}"
 export DBS_CONF_DEST="${DBS_CONF_DEST:-"/conf/dbs.conf"}"
 export DBS_CONF="${DBS_CONF:-"/conf/templates/conf.frep"}"
@@ -23,12 +24,15 @@ export KEEP_DAYS${KEEP_DAYS:-"2"}
 export KEEP_WEEKS=${KEEP_WEEKS:-"0"}
 export KEEP_MONTHES=${KEEP_MONTHES:-"0"}
 export KEEP_LOGS=${KEEP_LOGS:-"7"}
+export DBNAMES="${DBS_DBNAMES-${DBS_DB_NAMES-${DBNAMES-${DB_NAMES:-"all"}}}}"
 export RUNAS=${RUNAS:-""}
-if ( echo $BACKUP_TYPE | grep -iq post );then
-    export PASSWORD="${PASSWORD:-${POSTGRES_PASSWORD:-${PGPASSWORD:-${POSTGRES_PASSWORD-}}}}"
-    export DBUSER="${DBUSER:-${POSTGRES_USER-}}"
+if ( echo $BACKUP_TYPE | egrep -iq "pgrouting|postgis|post" );then
+    export PASSWORD="${PASSWORD:-${POSTGRES_PASSWORD:-${PGPASSWORD:-${POSTGRESQL_PASSWORD-}}}}"
+    export HOST="${HOST:-${POSTGRES_HOST:-${PGHOST:-${POSTGRESQL_HOST-}}}}"
+    export DBUSER="${DBUSER:-${POSTGRES_USER:-${POSTGRESQL_USER}}}"
     export PORT=${PORT-5432}
-elif ( echo $BACKUP_TYPE | grep -iq mysql );then
+elif ( echo $BACKUP_TYPE | egrep -iq mysql );then
+    export HOST="${HOST:-${MYSQL_HOST:-${MYSQLHOST-}}}"
     export PORT=${PORT-3306}
     export PASSWORD="${PASSWORD:-${MYSQL_PASSWORD}}"
     export DBUSER="${DBUSER:-${MYSQL_USER-}}"

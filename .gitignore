@@ -1,3 +1,5 @@
 /local
 *.retry
 /.ansible/scripts/ansible_deploy_env
+/db_smart_backup
+/build.log
