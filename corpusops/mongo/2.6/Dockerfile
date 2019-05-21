@@ -7,7 +7,7 @@ RUN sh -exc 'if ! (git --version >/dev/null 2>&1 );then \
       WANT_UPDATE=1 cops_pkgmgr_install.sh git;fi &&\
     git clone https://github.com/kiorky/db_smart_backup.git /srv/dbs \
     && cd /srv/dbs && git reset --hard $DBSMARTBACKUP_VERSION \
-    && cp *sh /usr/local/bin \
+    && cp *sh /bin \
     && mkdir /etc/dbsmartbackup \
     && cd / && rm -rf /srv/dbs'
 ADD rootfs/ /
