@@ -1,14 +1,15 @@
-8
-8.4
+8.4 8
 9
-9.1 9.0
+9-alpine
+9.0
+9.1
 9.2
 9.2-alpine
 9.3
-9.3-alpine
-9.4
+9.4 9.3-alpine
 9.4-alpine 
-9.5-alpine 9.5
+9.5
+9.5-alpine
 9.6
 9.6-alpine
 10
@@ -20,14 +21,15 @@
 10.2
 10.2-alpine
 10.3
-10.3-alpine
 10.4
-10.4-alpine
-10.5-alpine 10.5
-10.6
+10.4-alpine 10.3-alpine
+10.5
+10.5-alpine
 10.6-alpine
-10.7 11.2-alpine
+10.7 10.6
 10.7-alpine
+10.8
+10.8-alpine
 11
 11-alpine
 11.0
@@ -35,6 +37,11 @@
 11.1
 11.1-alpine
 11.2
+11.3
+11.3-alpine 11.2-alpine
+11.5
+11.5-alpine
+12-alpine
 alpine
 latest
- 9-alpine
+ 12
