@@ -17,4 +17,6 @@ RUN sh -exc ': \
 ADD rootfs/ /
 ENTRYPOINT ["dbs-entry.sh"]
 CMD []
+ENV DO_GLOBAL_BACKUP=1
 ENV BACKUP_TYPE=slapd
+ENV DBNAMES=all
