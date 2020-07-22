@@ -272,7 +272,14 @@ find_top_node() { (set +e && find_top_node_ && set -e;); }
 NODE_TOP="$(echo $(find_top_node))"
 MAILU_VERSiON=1.6
 BATCHED_IMAGES="\
-corpusops/solr/latest\
+corpusops/mariadb/10.1\
+ corpusops/mariadb/10.5\
+ corpusops/mariadb/10.0\
+ corpusops/mariadb/10\
+ corpusops/mariadb/5.5\
+ corpusops/mariadb/5\
+ corpusops/mariadb/latest\
+ corpusops/solr/latest\
  corpusops/solr/7\
  corpusops/solr/7-slim\
  corpusops/mysql/8\
