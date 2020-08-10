@@ -1,14 +1,13 @@
-8.4 8
+8
+8.4
 9
 9-alpine
-9.0
 9.1
-9.2
 9.2-alpine
 9.3
-9.4 9.3-alpine
-9.4-alpine 
-9.5
+9.3-alpine
+9.4
+9.4-alpine
 9.5-alpine
 9.6
 9.6-alpine
@@ -18,30 +17,57 @@
 10.0-alpine
 10.1
 10.1-alpine
-10.2
+10.2 9.5
 10.2-alpine
 10.3
-10.4
-10.4-alpine 10.3-alpine
+10.3-alpine
+10.4-alpine
 10.5
 10.5-alpine
+10.6
 10.6-alpine
-10.7 10.6
+10.7
 10.7-alpine
-10.8
-10.8-alpine
+10.8-alpine 10.4
+10.9
+10.9-alpine
+10.10
+10.10-alpine
+10.11
+10.11-alpine
+10.12
+10.12-alpine
+10.13
+10.13-alpine 11.5
 11
 11-alpine
 11.0
 11.0-alpine
-11.1
+11.1 11.8-alpine
 11.1-alpine
 11.2
+11.2-alpine
 11.3
-11.3-alpine 11.2-alpine
-11.5
+11.3-alpine
+11.4
+11.4-alpine
 11.5-alpine
+11.6 10.8
+11.6-alpine
+11.7
+11.7-alpine
+11.8
+12
 12-alpine
+12.0
+12.0-alpine
+12.1 9.2
+12.2
+12.2-alpine
+12.3
+12.3-alpine
+13
+13-alpine 12.1-alpine
 alpine
 latest
- 12
+ 9.0
