@@ -224,8 +224,8 @@ NBPARALLEL=${NBPARALLEL-4}
 SKIP_IMAGES_SCAN=${SKIP_IMAGES_SCAN-}
 SKIP_MINOR_ES="((elasticsearch):(1\.3|.*([0-5]\.?){3}(-32bit.*)?))"
 # SKIP_MINOR_NGINX="((nginx):.*[0-9]+\.[0-9]+\.[0-9]+(-32bit.*)?)"
-SKIP_MINOR="((wordpress|nginx|dejavu|redis|traefik|node|ruby|php|golang|python|mysql|postgres|solr|mongo|rabbitmq):.*[0-9]+\.([0-9]+\.)[0-9]+(-32bit.*)?)"
-  SKIP_PRE="((redis|traefik|node|ruby|php|golang|python|mysql|postgres|solr|elasticsearch|mongo|rabbitmq):.*(alpha|beta|rc)[0-9]*(-32bit.*)?)"
+SKIP_MINOR="((wordpress|nginx|dejavu|redis|traefik|node|ruby|php|golang|python|mariadb|mysql|postgres|solr|mongo|rabbitmq):.*[0-9]+\.([0-9]+\.)[0-9]+(-32bit.*)?)"
+  SKIP_PRE="((redis|traefik|node|ruby|php|golang|python|mariadb|mysql|postgres|solr|elasticsearch|mongo|rabbitmq):.*(alpha|beta|rc)[0-9]*(-32bit.*)?)"
 SKIP_OS="(((suse|centos|fedora|redhat|alpine|debian|ubuntu|oldstable|oldoldstable):.*[0-9]{8}.*)"
 SKIP_OS="$SKIP_OS|(debian:(6.*|squeeze))"
 SKIP_OS="$SKIP_OS|(ubuntu:(14.10|12|10|11|13|15))"
@@ -243,6 +243,7 @@ SKIPPED_TAGS="($SKIP_MAILU|$SKIP_MINOR_ES|$SKIP_MINOR|$SKIP_PRE|$SKIP_OS|$SKIP_P
 CURRENT_TS=$(date +%s)
 IMAGES_SKIP_NS="((mailhog|postgis|pgrouting|^library|dejavu|(minio/(minio|mc))))"
 default_images="
+corpusops/mariadb
 corpusops/mysql
 corpusops/postgres
 corpusops/solr
@@ -512,7 +513,7 @@ is_skipped() {
     fi
     return $ret
 }
-# echo $(set -x && is_skipped corpusops/redis/3.0.4-32bit;echo $?)
+# echo $(set -x && is_skipped library/redis/3.0.4-32bit;echo $?)
 # exit 1
 
 skip_local() {
@@ -562,7 +563,7 @@ get_image_tags() {
             result=$( curl "${u}?page=${i}" 2>/dev/null \
                 | jq -r '."results"[]["name"]' 2>/dev/null )
             has_more=$?
-            if [[ -n "${result}}" ]];then results="${results} ${result}";fi
+            if [[ -n "${result}" ]];then results="${results} ${result}";else has_more=256;fi
         done
         if [ ! -e "$TOPDIR/$n" ];then mkdir -p "$TOPDIR/$n";fi
         printf "$results\n" | sort -V > "$t.raw"
@@ -590,6 +591,7 @@ do_clean_tags() {
     log "Cleaning on $image"
     local tags=$(get_image_tags $image )
     debug "image: $image tags: $( echo $tags )"
+    if [[ -z "$1" ]];then echo "no image";exit 1;fi
     while read image;do
         local tag=$(basename $image)
         if ! ( echo "$tags" | egrep -q "^$tag$" );then
@@ -601,7 +603,7 @@ do_clean_tags() {
 
 #  refresh_images $args: refresh images files
 #     refresh_images:  (no arg) refresh all images
-#     refresh_images corpusops/ubuntu: only refresh ubuntu images
+#     refresh_images library/ubuntu: only refresh ubuntu images
 do_refresh_images() {
     local imagess="${@:-$default_images}"
     while read images;do
@@ -650,7 +652,7 @@ get_docker_squash_args() {
 }
 
 record_build_image() {
-    # library/ubuntu/latest / mdillon/postgis/latest
+    # library/ubuntu/latest / corpusops/postgis/latest
     local image=$1
     # latest / latest
     local git_commit="${git_commit:-$(get_git_changeset "$W")}"
@@ -668,7 +670,7 @@ record_build_image() {
     local retries=${DOCKER_BUILD_RETRIES:-4}
     local cmd="dret=8 && for i in \$(seq $retries);do if ($dbuild);then dret=0;break;else dret=6;fi;done"
     local cmd="$cmd && if [ \"x\$dret\" != \"x0\" ];then"
-    local cmd="$cmd      echo \"${RED}$image/$df build: Falling after $retries retries${NORMAL}\" >&2"
+    local cmd="$cmd      echo \"${RED}$image/$df build: Failing after $retries retries${NORMAL}\" >&2"
     local cmd="$cmd      && false;fi"
     local run="echo -e \"${RED}$dbuild${NORMAL}\" && $cmd"
     if [[ -n "$DO_RELEASE" ]];then
@@ -894,6 +896,10 @@ do_gen() {
     do_gen_travis
 }
 
+do_make_tags() {
+    make_tags $@
+}
+
 #  usage: show this help
 do_usage() {
     echo "$0:"
@@ -904,9 +910,10 @@ do_usage() {
     echo ""
 }
 
+
 do_main() {
     local args=${@:-usage}
-    local actions="refresh_corpusops|refresh_images|build|gen_travis|gen|list_images|clean_tags|get_namespace_tag"
+    local actions="make_tags|refresh_corpusops|refresh_images|build|gen_travis|gen|list_images|clean_tags|get_namespace_tag"
     actions="@($actions)"
     action=${1-};
     if [[ -n "$@" ]];then shift;fi
