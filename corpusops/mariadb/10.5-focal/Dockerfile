@@ -17,3 +17,4 @@ RUN sh -exc ': \
 ADD rootfs/ /
 ENTRYPOINT ["dbs-entry.sh"]
 CMD []
+ENV BACKUP_TYPE=mysql
