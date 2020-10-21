@@ -37,7 +37,16 @@ before_install:
 - sudo apt-get install -qq -y --force-yes parallel
 - sudo service docker stop
 - ./main.sh refresh_corpusops
-- sh -c "$apply_role */*/roles/corpusops.roles/services_virt_docker/role.yml"
+- >
+  sudo bash -exc "python -c
+  \"d='/etc/docker/daemon.json';
+  import json;
+  c = json.load(open(d));
+  c['experimental'] = True;
+  print(c);open(d, 'w').write(json.dumps(c))
+  \"
+  && systemctl restart docker"
+- echo "$DOCKER_PASSWORD" | docker login --password-stdin --username="$DOCKER_RELEASER"
 - i=$(whoami) && sudo chown -Rf $i $COPS_ROOT
 script:
 - echo "building $IMAGES" >&2
