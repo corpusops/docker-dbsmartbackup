@@ -1,0 +1,11 @@
+bash
+ca-certificates
+curl
+logrotate
+socat
+tar
+tzdata
+wget
+p7zip
+rsyslog
+openssl
