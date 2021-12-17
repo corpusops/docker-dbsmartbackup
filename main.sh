@@ -295,7 +295,7 @@ NODE_TOP="$(echo $(find_top_node))"
 MAILU_VERSiON=1.7
 
 BATCHED_IMAGES="\
-corpusops/opensearch/1.2.1 corpusops/opensearch/1.2.0 corpusops/opensearch/latest::44
+corpusops/opensearch/1.2.2 corpusops/opensearch/1.2.1 corpusops/opensearch/1.2.0 corpusops/opensearch/latest::44
 corpusops/slapd/latest::33
 corpusops/elasticsearch/7.14.2 corpusops/elasticsearch/6.8.9 corpusops/elasticsearch/5 corpusops/elasticsearch/2 corpusops/elasticsearch/1::33
 corpusops/postgres/14 corpusops/postgres/13 corpusops/postgres/12::33
