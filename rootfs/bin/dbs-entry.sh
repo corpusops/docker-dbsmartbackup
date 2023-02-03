@@ -3,7 +3,7 @@ set -ex
 SDEBUG=${SDEBUG-}
 log() { echo "$@">&2; }
 vv() { log "$@";"$@"; }
-export BACKUP_TYPE=${BACKUP_TYPE-}
+export BACKUP_TYPE=${DBS_BACKUP_TYPE-${BACKUP_TYPE-}}
 if [ "x${BACKUP_TYPE}" = "x" ];then
     log "no \$BACKUP_TYPE"
     exit 1
@@ -19,30 +19,30 @@ export DBS_CRONTAB="${DBS_CRONTAB:-"/conf/templates/crontab.frep"}"
 export DBS_CONF_DEST="${DBS_CONF_DEST:-"/conf/dbs.conf"}"
 export DBS_CONF="${DBS_CONF:-"/conf/templates/conf.frep"}"
 export IS_DCRON="${IS_DCRON-}"
-export KEEP_LASTS=${KEEP_LASTS:-"1"}
-export KEEP_DAYS${KEEP_DAYS:-"2"}
-export KEEP_WEEKS=${KEEP_WEEKS:-"0"}
-export KEEP_MONTHES=${KEEP_MONTHES:-"0"}
-export KEEP_LOGS=${KEEP_LOGS:-"7"}
+export KEEP_LASTS=${DBS_KEEP_LASTS-${KEEP_LASTS:-"1"}}
+export KEEP_DAYS=${DBS_KEEP_DAYS-${KEEP_DAYS:-"2"}}
+export KEEP_WEEKS=${DBS_KEEP_WEEKS-${KEEP_WEEKS:-"0"}}
+export KEEP_MONTHES=${DBS_KEEP_MONTHES-${KEEP_MONTHES:-"0"}}
+export KEEP_LOGS=${DBS_KEEP_LOGS-${KEEP_LOGS:-"7"}}
 export DBNAMES="${DBS_DBNAMES-${DBS_DB_NAMES-${DBNAMES-${DB_NAMES:-"all"}}}}"
-export RUNAS=${RUNAS:-""}
+export RUNAS=${DBS_RUNAS-${RUNAS:-""}}
 if ( echo $BACKUP_TYPE | egrep -iq "pgrouting|postgis|post" );then
-    export PASSWORD="${PASSWORD:-${POSTGRES_PASSWORD:-${PGPASSWORD:-${POSTGRESQL_PASSWORD-}}}}"
-    export HOST="${HOST:-${POSTGRES_HOST:-${PGHOST:-${POSTGRESQL_HOST-}}}}"
-    export DBUSER="${DBUSER:-${POSTGRES_USER:-${POSTGRESQL_USER}}}"
-    export PORT=${PORT-5432}
+    export PASSWORD="${DBS_PASSWORD-${PASSWORD:-${POSTGRES_PASSWORD:-${PGPASSWORD:-${POSTGRESQL_PASSWORD-}}}}}"
+    export HOST="${DBS_HOST-${HOST:-${POSTGRES_HOST:-${PGHOST:-${POSTGRESQL_HOST-}}}}}"
+    export DBUSER="${DBS_DBUSER-${DBUSER:-${POSTGRES_USER:-${POSTGRESQL_USER}}}}"
+    export PORT=${DBS_PORT-${PORT-5432}}
 elif ( echo $BACKUP_TYPE | egrep -iq mysql );then
-    export HOST="${HOST:-${MYSQL_HOST:-${MYSQLHOST-}}}"
-    export PORT=${PORT-3306}
-    export PASSWORD="${PASSWORD:-${MYSQL_PASSWORD}}"
-    export DBUSER="${DBUSER:-${MYSQL_USER-}}"
+    export HOST="${DBS_HOST-${HOST:-${MYSQL_HOST:-${MYSQLHOST-}}}}"
+    export PORT=${DBS_PORT-${PORT-3306}}
+    export PASSWORD="${DBS_PASSWORD-${PASSWORD:-${MYSQL_PASSWORD}}}"
+    export DBUSER="${DBS_DBUSER-${DBUSER:-${MYSQL_USER-}}}"
     if [  "x${NO_AUTO_PORT-}" = "x" ];then
         if [ "x$PORT" != "x"  ];then export MYSQL_PORT="$PORT";fi
     fi
 else
-    export PORT=${PORT}
-    export PASSWORD="${PASSWORD-}"
-    export DBUSER="${DBUSER-}"
+    export PORT=${DBS_PORT-${PORT}}
+    export PASSWORD="${DBS_PASSWORD-${PASSWORD-}}"
+    export DBUSER="${DBS_DBUSER-${DBUSER-}}"
 fi
 if [ "${IS_DCRON}" = "x" ] && [ ! -e /etc/cron.d ];then
     export IS_DCRON="0"
@@ -76,4 +76,4 @@ if [ "x$@" = "x" ];then
 fi
 log "Running $@"
 exec ${@}
-# vim:set et sts=4 ts=4 tw=80:
+# vim:set et sts=4 ts=4 tw=0:
