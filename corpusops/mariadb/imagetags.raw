@@ -2,12 +2,12 @@
 5-trusty
 5-wheezy
 5.5
-5.5-wheezy
+5.5-wheezy 5.5-trusty
 10
-10-bionic latest
+10-bionic
 10-focal
 10-jessie
-10.0 5.5-trusty
+10.0
 10.0-jessie
 10.0-xenial
 10.1
@@ -18,13 +18,13 @@
 10.3
 10.3-bionic
 10.3-focal
-10.3-jessie bionic
-10.4
+10.3-jessie
+10.4 latest
 10.4-bionic
-10.4-focal
-10.5
+10.5 10.4-focal
 10.5-bionic
 10.5-focal
+bionic
 focal
 jessie
  10.1-jessie
