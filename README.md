@@ -28,35 +28,35 @@ Notable environment variables defaults to play with when ``DBS_AUTOCONF`` is set
 
 ```sh
 export DO_GLOBAL_BACKUP="${DBS_DO_GLOBAL_BACKUP-${DO_GLOBAL_BACKUP}}"
-export DBNAMES=${DBS_DBNAMES-${DBNAMES:-"all"}}
+export DBS_DBNAMES=${DBS_DBNAMES-${DBNAMES:-"all"}}
 export DBS_PERIODICITY="${DBS_USER:-"0 3 * * *"}"
-export KEEP_LASTS=${KEEP_LASTS:-"1"}
-export KEEP_DAYS${KEEP_DAYS:-"2"}
-export KEEP_WEEKS=${KEEP_WEEKS:-"0"}
-export KEEP_MONTHES=${KEEP_MONTHES:-"0"}
-export KEEP_LOGS=${KEEP_LOGS:-"7"}
+export DBS_KEEP_LASTS=${DBS_KEEP_LASTS:-"1"}
+export DBS_KEEP_DAYS=${DBS_KEEP_DAYS:-"2"}
+export DBS_KEEP_WEEKS=${DBS_KEEP_WEEKS:-"0"}
+export DBS_KEEP_MONTHES=${DBS_KEEP_MONTHES:-"0"}
+export DBS_KEEP_LOGS=${KDBS_EEP_LOGS:-"7"}
 export DBS_USER="${DBS_USER:-"root"}"
 export DBS_COMMAND="${DBS_COMMAND:-"/usr/local/bin/run_dbsmartbackup.sh --quiet --no-colors"}"
 export DBS_CRONTAB="${DBS_CRONTAB:-"/conf/templates/crontab.frep"}"
 export DBS_CONF_DEST="${DBS_CONF_DEST:-"/conf/dbs.conf"}"
 export DBS_CONF="${DBS_CONF:-"/conf/templates/conf.frep"}"
-export RUNAS=${RUNAS:-""}
+export DBS_RUNAS=${DBS_RUNAS:-""}
 ```
 
 ### For pgsql
 ```sh
-export HOST="${HOST:-${POSTGRES_HOST:-${PGHOST:-${POSTGRESQL_HOST-}}}}"
-export PASSWORD="${PASSWORD:-${POSTGRES_PASSWORD:-${PGPASSWORD:-${POSTGRESQL_PASSWORD-}}}}"
-export DBUSER="${DBUSER:-${POSTGRES_USER:-${POSTGRESQL_USER}}}"
-export PORT=${PORT-5432}
+export DBS_HOST="${DBS_HOST:-${POSTGRES_HOST:-${PGHOST:-${POSTGRESQL_HOST-}}}}"
+export DBS_PASSWORD="${DBS_PASSWORD:-${POSTGRES_PASSWORD:-${PGPASSWORD:-${POSTGRESQL_PASSWORD-}}}}"
+export DBS_DBUSER="${DBS_DBUSER:-${POSTGRES_USER:-${POSTGRESQL_USER}}}"
+export DBS_PORT=${DBS_PORT-5432}
 ```
 
 ### For mysql
 ```sh
-export HOST="${HOST:-${MYSQL_HOST:-${MYSQLHOST-}}}"
-export PORT=${PORT-3306}
-export PASSWORD="${PASSWORD:-${MYSQL_PASSWORD}}"
-export DBUSER="${DBUSER:-${MYSQL_USER-}}"
+export DBS_HOST="${DBS_HOST:-${MYSQL_HOST:-${MYSQLHOST-}}}"
+export DBS_PORT=${DBS_PORT-3306}
+export DBS_PASSWORD="${DBS_PASSWORD:-${MYSQL_PASSWORD}}"
+export DBS_DBUSER="${DBS_DBUSER:-${MYSQL_USER-}}"
 ```
 
 You have to set ``DBS_AUTOCONF`` to use the entry point without configuration via env. variables.
