@@ -508,6 +508,9 @@ gen_image() {
     if [ -e ../tag ];then
         IMG=$(cat ../tag )
     fi
+    echo "$DOCKER_REPO">../repo
+    echo dbsmartbackup > ../tag
+    echo "$(basename $image)-$tag" > version
     export _cops_BASE=$image
     export _cops_VERSION=$tag
     export _cops_IMG=$DOCKER_REPO/$(basename $IMG)
@@ -575,7 +578,7 @@ do_get_namespace_tag() {
             if [ -e $i/version ];then version=$( cat $i/version );break;fi
         done
         echo "$repo/$tag:$version" \
-            | sed -re "s/(-?(server)?-(web-vault|postgresql|mysql)):/-server:\3-/g"
+            | sed -re "s/(-?(server)?-(web-vault|elasticsearch|opensearch|postgresql|mysql|mongo|mongodb|maria|mariadb)):/-server:\3-/g"
     done
 }
 
