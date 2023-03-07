@@ -321,12 +321,8 @@ corpusops/postgres/alpine\
  corpusops/elasticsearch/6.5.1\
  corpusops/elasticsearch/6.5.0\
  corpusops/solr/7-alpine::37
-corpusops/elasticsearch/6.4.3\
- corpusops/elasticsearch/6.4.2\
- corpusops/elasticsearch/6.4.1\
- corpusops/elasticsearch/6.4.0\
- corpusops/elasticsearch/1\
- corpusops/elasticsearch/2::15
+corpusops/opensearch/1.2.0\
+ corpusops/elasticsearch/7.14.2::15
 corpusops/postgres/latest\
  mdillon/postgis/latest\
  corpusops/postgres/11\
