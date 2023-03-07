@@ -1,4 +1,4 @@
-FROM opensearchproject/opensearch:latest
+FROM corpusops/opensearch:1.0.1
 ARG NONINTERACTIVE=1
 ARG DBSMARTBACKUP_VERSION=origin/master
 ENV DBSMARTBACKUP_VERSION=$DBSMARTBACKUP_VERSION
