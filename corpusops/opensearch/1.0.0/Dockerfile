@@ -2,6 +2,7 @@ FROM corpusops/opensearch:1.0.0
 ARG NONINTERACTIVE=1
 ARG DBSMARTBACKUP_VERSION=origin/master
 ENV DBSMARTBACKUP_VERSION=$DBSMARTBACKUP_VERSION
+USER root
 RUN sh -exc ': \
     && if ! (git --version >/dev/null 2>&1 );then \
       if ( apt-get --version >/dev/null 2>&1 ) && ( apt-get update -yqq ) && ! ( apt-get install -y git );then \
@@ -17,3 +18,4 @@ RUN sh -exc ': \
 ADD rootfs/ /
 ENTRYPOINT ["dbs-entry.sh"]
 CMD []
+USER 1000

@@ -264,7 +264,7 @@ IMAGES_SKIP_NS="((mailhog|postgis|pgrouting(-bare)?|^library|dejavu|(minio/(mini
 
 
 default_images="
-opensearchproject/opensearch
+corpusops/opensearch
 corpusops/mariadb
 corpusops/mysql
 corpusops/postgres
