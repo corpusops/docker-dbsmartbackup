@@ -251,10 +251,7 @@ SKIP_TF="(tensorflow.serving:[0-9].*)"
 SKIP_MINIO="(k8s-operator|((minio|mc):(RELEASE.)?[0-9]{4}-.{7}))"
 SKIP_MAILU="(mailu.*(feat|patch|merg|refactor|revert|upgrade|fix-|pr-template))"
 SKIP_DOCKER="docker(\/|:)([0-9]+\.[0-9]+\.|17|18.0[1-6]|1$|1(\.|-)).*"
-SKIP_MINOR_ES="((elasticsearch):([0-5]\.?){3}(-32bit.*)?)"
-SKIP_MINOR_ES="$SKIP_MINOR_ES|(elasticsearch:(5\.[0-4]\.)|(6\.8\.[0-8])|(6\.[0-7]))"
-SKIP_MINOR_ES="$SKIP_MINOR_ES|(elasticsearch:(7\.9\.[0-2]|7\.[0-8]\.))"
-SKIP_MINOR_ES="$SKIP_MINOR_ES|:1\.[3-7]"
+SKIP_MINOR_ES="elasticsearch:(([0-4]\.?){3}(-32bit.*)?|2\.[0-3]\.|5\.[1-5]\.|1\.[3-7])"
 SKIP_MINOR="(.*solr):.*[0-9]+\.([0-9]+\.)[0-9]+(-32bit.*)?"
 SKIPPED_TAGS="$SKIP_TF|$SKIP_MINOR_OS|$SKIP_NODE|$SKIP_DOCKER|$SKIP_MINIO|$SKIP_MAILU|$SKIP_MINOR_ES|$SKIP_MINOR|$SKIP_PRE|$SKIP_OS|$SKIP_PHP|$SKIP_WINDOWS"
 SKIPPED_TAGS="$SKIP_MINOR_OS|$SKIP_MINOR_ES|$SKIP_PRE|$SKIP_MINOR"
@@ -274,6 +271,7 @@ corpusops/elasticsearch
 corpusops/pgrouting
 corpusops/postgis
 "
+PROTECTED_TAGS="corpusops/rsyslog"
 find_top_node_() {
     img=library/node
     if [ ! -e $img ];then return;fi
@@ -294,61 +292,11 @@ NODE_TOP="$(echo $(find_top_node))"
 MAILU_VERSiON=1.7
 
 BATCHED_IMAGES="\
-corpusops/mariadb/10.1\
- corpusops/mariadb/10.5\
- corpusops/mariadb/10.0\
- corpusops/mariadb/10\
- corpusops/mariadb/5.5\
- corpusops/mariadb/5\
- corpusops/mariadb/latest\
- corpusops/solr/latest\
- corpusops/solr/7\
- corpusops/solr/7-slim\
- corpusops/mysql/8\
- corpusops/mysql/5\
- corpusops/mongo/latest\
- corpusops/mongo/4::40
-corpusops/postgres/alpine\
- corpusops/postgres/11-alpine\
- corpusops/postgres/10-alpine\
- mdillon/postgis/alpine\
- mdillon/postgis/11-alpine\
- mdillon/postgis/10-alpine\
- corpusops/elasticsearch/5-alpine\
- corpusops/elasticsearch/6.5.4\
- corpusops/elasticsearch/6.5.3\
- corpusops/elasticsearch/6.5.2\
- corpusops/elasticsearch/6.5.1\
- corpusops/elasticsearch/6.5.0\
- corpusops/solr/7-alpine::37
-corpusops/opensearch/1.2.0\
- corpusops/elasticsearch/7.14.2::15
-corpusops/postgres/latest\
- mdillon/postgis/latest\
- corpusops/postgres/11\
- makinacorpus/pgrouting\
- corpusops/postgres/10\
- corpusops/postgres/9\
- mdillon/postgis/11\
- mdillon/postgis/10\
- mdillon/postgis/9\
- corpusops/mysql/latest\
- corpusops/elasticsearch/5\
- corpusops/mongo/3\
- corpusops/solr/6\
- corpusops/solr/6-slim\
- corpusops/solr/5-slim\
- corpusops/solr/5\
- corpusops/mongo/2::23
-corpusops/postgres/9-alpine\
- mdillon/postgis/9-alpine\
- corpusops/solr/6-alpine\
- corpusops/solr/5-alpine\
- corpusops/solr/7-slim-alpine\
- corpusops/solr/6-slim-alpine\
- corpusops/solr/5-slim-alpine\
- corpusops/elasticsearch/1-alpine\
- corpusops/elasticsearch/2-alpine::23
+corpusops/opensearch/1.2.0 corpusops/opensearch/latest::4
+corpusops/opensearch/1.1.0 corpusops/opensearch/1.0.1 corpusops/opensearch/1.0.0::3
+corpusops/elasticsearch/7.14.2 corpusops/elasticsearch/6.8.9 corpusops/elasticsearch/5 corpusops/elasticsearch/2 corpusops/elasticsearch/1
+
+
 "
 SKIP_REFRESH_ANCESTORS=${SKIP_REFRESH_ANCESTORS-}
 
@@ -536,6 +484,7 @@ gen_image() {
 
 is_skipped() {
     local ret=1 t="$@"
+    if [[ -z $SKIPPED_TAGS ]];then return 1;fi
     if ( echo "$t" | egrep -q "$SKIPPED_TAGS" );then
         ret=0
     fi
@@ -601,7 +550,25 @@ get_image_tags() {
             if [[ -n "${result}" ]];then results="${results} ${result}";else has_more=256;fi
         done
         if [ ! -e "$TOPDIR/$n" ];then mkdir -p "$TOPDIR/$n";fi
-        printf "$results\n" | sort -V > "$t.raw"
+        printf "$results\n" | xargs -n 1 | sed -e "s/ //g" | sort -V > "$t.raw"
+    fi
+    # cleanup elastic minor images (keep latest)
+    ONE_MINOR="elasticsearch"
+    if ( echo $t | egrep -q "$ONE_MINOR" );then
+        atags="$(cat $t.raw)"
+        for ix in $(seq 0 15);do
+            for j in $(seq 0 30);do
+                mv="$(  (( echo "$atags" | egrep "$ix\.$j\." | grep -v alpine ) || true )|sort -V )"
+                amv="$( (( echo "$atags" | egrep "$ix\.$j\." | grep    alpine ) || true )|sort -V )"
+                for selected in "$mv" "$amv";do
+                    if [[ -n "$selected" ]];then
+                        for l in $(echo "$selected"|sed -e "$ d");do
+                            SKIPPED_TAGS="$SKIPPED_TAGS|${ONE_MINOR}:$l$"
+                        done
+                    fi
+                done
+            done
+        done
     fi
     if [[ -z ${SKIP_TAGS_REBUILD} ]];then
     rm -f "$t"
@@ -644,6 +611,7 @@ do_clean_tags() {
 do_refresh_images() {
     local imagess="${@:-$default_images}"
     cp -vf local/corpusops.bootstrap/bin/cops_pkgmgr_install.sh helpers/
+    if [[ -z ${SKIP_REFRESH_COPS-} ]];then
     if ! ( grep -q corpusops/docker-images .git/config );then
     if [ ! -e local/docker-images ];then
         git clone https://github.com/corpusops/docker-images local/docker-images
@@ -652,13 +620,16 @@ do_refresh_images() {
       && cp -rf helpers        rootfs packages ../..; )
 #      && cp -rf helpers Dock* rootfs packages ../..; )
     fi
+    fi
     while read images;do
         for image in $images;do
             if [[ -n $image ]];then
                 if [[ -z "${SKIP_MAKE_TAGS-}" ]];then
                     make_tags $image
                 fi
-                do_clean_tags $image
+                if ( echo "$image" | egrep -vq "${PROTECTED_TAGS-}" ) || [[ -z ${PROTECTED_TAGS-} ]];then
+                    do_clean_tags $image
+                fi
             fi
         done
     done <<< "$imagess"
