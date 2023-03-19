@@ -293,10 +293,19 @@ MAILU_VERSiON=1.7
 
 BATCHED_IMAGES="\
 corpusops/opensearch/1.2.0 corpusops/opensearch/latest::4
-corpusops/opensearch/1.1.0 corpusops/opensearch/1.0.1 corpusops/opensearch/1.0.0::3
-corpusops/elasticsearch/7.14.2 corpusops/elasticsearch/6.8.9 corpusops/elasticsearch/5 corpusops/elasticsearch/2 corpusops/elasticsearch/1
-
-
+corpusops/slapd/latest::33
+corpusops/elasticsearch/7.14.2 corpusops/elasticsearch/6.8.9 corpusops/elasticsearch/5 corpusops/elasticsearch/2 corpusops/elasticsearch/1::33
+corpusops/postgres/14 corpusops/postgres/13 corpusops/postgres/12::33
+corpusops/postgres/11 corpusops/postgres/10 corpusops/postgres/9::33
+corpusops/postgis/13-3 corpusops/postgis/13-2.5 corpusops/postgis/13::33
+corpusops/postgis/12-3 corpusops/postgis/12-2.5 corpusops/postgis/12::33
+corpusops/postgis/11-3 corpusops/postgis/11-2.5 corpusops/postgis/11::33
+corpusops/postgis/10-3 corpusops/postgis/10-2.5 corpusops/postgis/10-2.4 corpusops/postgis/10 corpusops/postgis/9::33
+corpusops/solr/slim corpusops/solr/8-slim corpusops/solr/7-slim corpusops/solr/6-slim corpusops/solr/5-slim::33
+corpusops/solr/latest corpusops/solr/8 corpusops/solr/7 corpusops/solr/6 corpusops/solr/5::33
+corpusops/mariadb/10 corpusops/mariadb/10-bionic corpusops/mariadb/10-focal corpusops/mariadb/10-jessie::33
+corpusops/mariadb/5 corpusops/mariadb/5-trusty corpusops/mariadb/5-wheezy::33
+corpusops/mariadb/bionic corpusops/mariadb/focal corpusops/mariadb/jessie corpusops/mariadb/latest::33
 "
 SKIP_REFRESH_ANCESTORS=${SKIP_REFRESH_ANCESTORS-}
 
