@@ -1,4 +1,6 @@
-FROM corpusops/postgres:10.1-alpine
+FROM scratch AS rootfs
+ADD /rootfs /rootfs
+FROM corpusops/postgres:10.1-alpine AS final
 ARG NONINTERACTIVE=1
 ARG DBSMARTBACKUP_VERSION=origin/master
 ENV DBSMARTBACKUP_VERSION=$DBSMARTBACKUP_VERSION
@@ -14,7 +16,9 @@ RUN sh -exc ': \
     && cp *sh /bin \
     && mkdir /etc/dbsmartbackup \
     && cd / && rm -rf /srv/dbs'
-ADD rootfs/ /
+# workaround for https://github.com/moby/moby/issues/42148
+## ADD rootfs/ /
+RUN --mount=type=bind,from=rootfs,target=/s bash -exc 'cp -frv /s/* /'
 ENTRYPOINT ["dbs-entry.sh"]
 CMD []
 ENV BACKUP_TYPE=postgresql
