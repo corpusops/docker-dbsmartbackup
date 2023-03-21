@@ -10,6 +10,8 @@ RUN sh -exc ': \
     && cp *sh /bin \
     && mkdir /etc/dbsmartbackup \
     && cd / && rm -rf /srv/dbs'
-ADD rootfs/ /
+# workaround for https://github.com/moby/moby/issues/42148
+## ADD rootfs/ /
+RUN --mount=type=bind,from=rootfs,target=/s bash -exc 'cp -frv /s/* /'
 ENTRYPOINT ["dbs-entry.sh"]
 CMD []

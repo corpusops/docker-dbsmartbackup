@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -e
 shopt -s extglob
+export DOCKER_BUILDKIT=${DOCKER_BUILDKIT-1}
+export COMPOSE_DOCKER_CLI_BUILD=${COMPOSE_DOCKER_CLI_BUILD-1}
+export BUILDKIT_PROGRESS=${BUILDKIT_PROGRESS-plain}
 ## refresh from corpsusops.bootstrap/hacking/shell_glue (copy paste until last function)
 readlinkf() {
     if ( uname | egrep -iq "darwin|bsd" );then
