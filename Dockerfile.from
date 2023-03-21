@@ -1,1 +1,3 @@
-FROM ${_cops_BASE}:${_cops_VERSION}
+FROM scratch AS rootfs
+ADD /rootfs /rootfs
+FROM ${_cops_BASE}:${_cops_VERSION} AS final
