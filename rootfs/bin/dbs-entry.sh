@@ -1,5 +1,11 @@
 #!/usr/bin/env sh
 set -ex
+if ( echo "${DBS_ENABLED:-1}${DBS_DISABLED:-0}" | grep -Eiq "^(0|n|f).|.(1|t|y)$"; );then
+    while true;do
+        echo "DBS is disabled, looping in noop"
+        sleep 64000
+    done
+fi
 SDEBUG=${SDEBUG-}
 log() { echo "$@">&2; }
 vv() { log "$@";"$@"; }
