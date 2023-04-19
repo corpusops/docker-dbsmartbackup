@@ -19,7 +19,7 @@ RUN sh -exc ': \
     && cd / && rm -rf /srv/dbs'
 # workaround for https://github.com/moby/moby/issues/42148
 ## ADD rootfs/ /
-RUN --mount=type=bind,from=rootfs,target=/s bash -exc 'cp -frv /s/* /'
+RUN --mount=type=bind,from=rootfs,target=/s bash -exc 'cp -frv /s/rootfs/. /'
 ENTRYPOINT ["dbs-entry.sh"]
 CMD []
 ENV BACKUP_TYPE=solr

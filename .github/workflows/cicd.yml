@@ -65,7 +65,7 @@ jobs:
       fail-fast: false
       matrix:
         IMAGES:
-        - "corpusops/opensearch/1.2.0 corpusops/opensearch/latest"
+        - "corpusops/opensearch/1.2.1 corpusops/opensearch/1.2.0 corpusops/opensearch/latest"
         - "corpusops/slapd/latest"
         - "corpusops/elasticsearch/7.14.2 corpusops/elasticsearch/5 corpusops/elasticsearch/2 corpusops/elasticsearch/1"
         - "corpusops/postgres/14 corpusops/postgres/13 corpusops/postgres/12"
