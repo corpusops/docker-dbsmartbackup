@@ -1,16 +1,10 @@
 FROM scratch AS rootfs
 ADD /rootfs /rootfs
-FROM corpusops/elasticsearch:5.0.2 AS final
+FROM corpusops/opensearch:1.2.2 AS final
 ARG NONINTERACTIVE=1
 ARG DBSMARTBACKUP_VERSION=origin/master
 ENV DBSMARTBACKUP_VERSION=$DBSMARTBACKUP_VERSION
-RUN sh -exc 'pkgs="jq" &&\
-    if ( apt-get --version >/dev/null 2>&1; );then\
-        pkgs="$pkgs xz-utils";\
-    else\
-        pkgs="$pkgs xz";\
-    fi\
-    && NONINTERACTIVE=1 WANT_UPDATE=1 cops_pkgmgr_install.sh $pkgs'
+USER root
 RUN sh -exc ': \
     && if ! (git --version >/dev/null 2>&1 );then \
       if ( apt-get --version >/dev/null 2>&1 ) && ( apt-get update -yqq ) && ! ( apt-get install -y git );then \
@@ -28,4 +22,4 @@ RUN sh -exc ': \
 RUN --mount=type=bind,from=rootfs,target=/s bash -exc 'cp -frv /s/rootfs/. /'
 ENTRYPOINT ["dbs-entry.sh"]
 CMD []
-ENV BACKUP_TYPE=elasticsearch
+USER 1000
