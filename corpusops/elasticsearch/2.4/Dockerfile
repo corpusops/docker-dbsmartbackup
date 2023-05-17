@@ -1,6 +1,6 @@
 FROM scratch AS rootfs
 ADD /rootfs /rootfs
-FROM corpusops/elasticsearch:6.8.20 AS final
+FROM corpusops/elasticsearch:2.4 AS final
 ARG NONINTERACTIVE=1
 ARG DBSMARTBACKUP_VERSION=origin/master
 ENV DBSMARTBACKUP_VERSION=$DBSMARTBACKUP_VERSION

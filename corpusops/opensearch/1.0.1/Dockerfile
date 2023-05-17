@@ -22,4 +22,4 @@ RUN sh -exc ': \
 RUN --mount=type=bind,from=rootfs,target=/s bash -exc 'for i in /s/rootfs/*;do cp -frv $i/. /$(basename $i)/;done'
 ENTRYPOINT ["dbs-entry.sh"]
 CMD []
-USER 1000
+ENV BACKUP_TYPE=es

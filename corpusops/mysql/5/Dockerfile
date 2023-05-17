@@ -22,3 +22,4 @@ RUN --mount=type=bind,from=rootfs,target=/s bash -exc 'for i in /s/rootfs/*;do c
 ENTRYPOINT ["dbs-entry.sh"]
 CMD []
 ENV BACKUP_TYPE=mysql
+USER root
