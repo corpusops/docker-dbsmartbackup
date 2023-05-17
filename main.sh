@@ -623,6 +623,12 @@ do_clean_tags() {
 do_refresh_images() {
     local imagess="${@:-$default_images}"
     cp -vf local/corpusops.bootstrap/bin/cops_pkgmgr_install.sh helpers/
+    if [ ! -e db_smart_backup ];then
+        git clone https://github.com/kiorky/db_smart_backup
+    fi
+    if [[ -z ${SKIP_REFRESH_DBS-} ]];then
+        ( cd db_smart_backup && git fetch --all && git reset --hard origin )
+    fi
     if [[ -z ${SKIP_REFRESH_COPS-} ]];then
     if ! ( grep -q corpusops/docker-images .git/config );then
     if [ ! -e local/docker-images ];then
