@@ -1,6 +1,6 @@
 FROM scratch AS rootfs
 ADD /rootfs /rootfs
-FROM corpusops/slapd:latest AS final
+FROM corpusops/slapd:18.04-no-squash AS final
 ARG NONINTERACTIVE=1
 ARG DBSMARTBACKUP_VERSION=origin/master
 ENV DBSMARTBACKUP_VERSION=$DBSMARTBACKUP_VERSION
