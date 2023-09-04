@@ -60,3 +60,4 @@ export DBS_DBUSER="${DBS_DBUSER:-${MYSQL_USER-}}"
 ```
 
 You have to set ``DBS_AUTOCONF`` to use the entry point without configuration via env. variables.
+
