@@ -65,11 +65,13 @@ jobs:
       fail-fast: false
       matrix:
         IMAGES:
-        - "corpusops/opensearch/1.2.2 corpusops/opensearch/1.2.1 corpusops/opensearch/1.2.0 corpusops/opensearch/latest"
+        - "corpusops/opensearch/2.4.0 corpusops/opensearch/1.2.3 corpusops/opensearch/latest"
         - "corpusops/slapd/latest"
-        - "corpusops/elasticsearch/7.14.2 corpusops/elasticsearch/5 corpusops/elasticsearch/2 corpusops/elasticsearch/1"
-        - "corpusops/postgres/14 corpusops/postgres/13 corpusops/postgres/12"
+        - "corpusops/elasticsearch/5"
+        - "corpusops/postgres/15 corpusops/postgres/14 corpusops/postgres/13 corpusops/postgres/12"
         - "corpusops/postgres/11 corpusops/postgres/10 corpusops/postgres/9"
+        - "corpusops/postgis/15-3 corpusops/postgis/15"
+        - "corpusops/postgis/14-3 corpusops/postgis/14"
         - "corpusops/postgis/13-3 corpusops/postgis/13-2.5 corpusops/postgis/13"
         - "corpusops/postgis/12-3 corpusops/postgis/12-2.5 corpusops/postgis/12"
         - "corpusops/postgis/11-3 corpusops/postgis/11-2.5 corpusops/postgis/11"
@@ -79,6 +81,9 @@ jobs:
         - "corpusops/mariadb/10 corpusops/mariadb/10-bionic corpusops/mariadb/10-focal corpusops/mariadb/10-jessie"
         - "corpusops/mariadb/5 corpusops/mariadb/5-trusty corpusops/mariadb/5-wheezy"
         - "corpusops/mariadb/bionic corpusops/mariadb/focal corpusops/mariadb/jessie corpusops/mariadb/latest"
+        - "corpusops/mysql/5 corpusops/mysql/5.5 corpusops/mysql/5.6 corpusops/mysql/5.7"
+        - "corpusops/mysql/latest corpusops/mysql/debian"
+        - "corpusops/mysql/8 corpusops/mysql/8.0"
         #- "corpusops/test/a corpusops/test/b corpusops/test/c"
         # all images that werent explicitly told to be built would be built in the next batches
         # we span them onto N jobs

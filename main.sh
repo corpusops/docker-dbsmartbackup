@@ -227,7 +227,6 @@ NBPARALLEL=${NBPARALLEL-2}
 SKIP_TAGS_REBUILD=${SKIP_TAGS_REBUILD-}
 SKIP_TAGS_REFRESH=${SKIP_TAGS_REFRESH-${SKIP_TAGS_REBUILD}}
 SKIP_IMAGES_SCAN=${SKIP_IMAGES_SCAN-}
-SKIP_MINOR_ES2="$SKIP_MINOR_ES|(elasticsearch:(5\.[0-4]\.)|(6\.8\.[0-8])|(6\.[0-7])|(7\.9\.[0-2])|(7\.[0-8]))"
 # SKIP_MINOR_NGINX="((nginx):.*[0-9]+\.[0-9]+\.[0-9]+(-32bit.*)?)"
 MINOR_IMAGES="(golang|mariadb|memcached|mongo|mysql|nginx|node|php|postgres|python|rabbitmq|redis|redmine|ruby|solr)"
 SKIP_MINOR_OS="$MINOR_IMAGES:.*alpine[0-9].*"
@@ -254,14 +253,19 @@ SKIP_TF="(tensorflow.serving:[0-9].*)"
 SKIP_MINIO="(k8s-operator|((minio|mc):(RELEASE.)?[0-9]{4}-.{7}))"
 SKIP_MAILU="(mailu.*(feat|patch|merg|refactor|revert|upgrade|fix-|pr-template))"
 SKIP_DOCKER="docker(\/|:)([0-9]+\.[0-9]+\.|17|18.0[1-6]|1$|1(\.|-)).*"
-SKIP_MINOR_ES="elasticsearch:(([0-4]\.?){3}(-32bit.*)?|2\.[0-3]\.|5\.[1-5]\.|1\.[3-7])"
-SKIP_MINOR="(.*solr):.*[0-9]+\.([0-9]+\.)[0-9]+(-32bit.*)?"
-SKIPPED_TAGS="$SKIP_TF|$SKIP_MINOR_OS|$SKIP_NODE|$SKIP_DOCKER|$SKIP_MINIO|$SKIP_MAILU|$SKIP_MINOR_ES|$SKIP_MINOR|$SKIP_PRE|$SKIP_OS|$SKIP_PHP|$SKIP_WINDOWS"
-SKIPPED_TAGS="$SKIP_MINOR_OS|$SKIP_MINOR_ES|$SKIP_PRE|$SKIP_MINOR"
-SKIPPED_TAGS="$SKIPPED_TAGS"
 CURRENT_TS=$(date +%s)
 IMAGES_SKIP_NS="((mailhog|postgis|pgrouting(-bare)?|^library|dejavu|(minio/(minio|mc))))"
 
+MONGO_SKIPPED_TAGS="mongo:(2|3\.[0-9]+)"
+SKIP_POSTGIS="$SKIP_MISC|$SKIP_PRE|postgis.*:(.*1[3-9].-[0-3]|9|10|11)\.|.*alpine.*)"
+SKIP_PGROUTING="$SKIP_MISC|$SKIP_PRE|routing:(9|10|11)\.|:.*alpine.*|11-3-3.0"
+SKIP_POSTGRES="$SKIP_MISC|$SKIP_PRE|pgrouting.*1[3-9].*3.0|alpine|postgres:(.*(bullseye|buster|stretch|jessie)|.*beta.*|.*alpine3.*|.*alpine.*|9\.[0-9]+\.[0-9]+.*|9\.0|8.*|1[0-9]\.[0-9].*)$"
+ES_SKIPPED_TAGS="elasticsearch:(([0-4]\.?){3}(-32bit.*)?|2\.[0-3]\.|1\.[3-7]|1|2.*|5-alpine|5.0|5.1|5.2|5.3|5.4|5.5|5\.[0-5]\..*|6\.[1-10]|7\.[0-10])"
+SOLR_SKIPPED_TAGS="solr.*[0-9]+[.][0-9]+[.].*|$MINOR_IMAGES:(.*solr)"
+MYSQL_SKIPPED_TAGS="mysql:[0-9]+\.[0-9]+\.[0-9]+"
+
+SKIPPED_TAGS="$ES_SKIPPED_TAGS|$SOLR_SKIPPED_TAGS|$MYSQL_SKIPPED_TAGS|$SKIP_POSTGRES|$SKIP_PGROUTING|$MONGO_SKIPPED_TAGS"
+#SKIP_MINOR_OS|$SKIP_MINOR_ES|$SKIP_PRE|$SKIP_MINOR"
 
 default_images="
 corpusops/opensearch
@@ -274,6 +278,7 @@ corpusops/elasticsearch
 corpusops/pgrouting
 corpusops/postgis
 "
+ONLY_ONE_MINOR="postgres|elasticsearch|nginx|opensearch"
 PROTECTED_TAGS="corpusops/rsyslog"
 find_top_node_() {
     img=library/node
@@ -295,11 +300,13 @@ NODE_TOP="$(echo $(find_top_node))"
 MAILU_VERSiON=1.7
 
 BATCHED_IMAGES="\
-corpusops/opensearch/1.2.2 corpusops/opensearch/1.2.1 corpusops/opensearch/1.2.0 corpusops/opensearch/latest::44
+corpusops/opensearch/2.4.0 corpusops/opensearch/1.2.3 corpusops/opensearch/latest::44
 corpusops/slapd/latest::33
 corpusops/elasticsearch/7.14.2 corpusops/elasticsearch/6.8.9 corpusops/elasticsearch/5 corpusops/elasticsearch/2 corpusops/elasticsearch/1::33
-corpusops/postgres/14 corpusops/postgres/13 corpusops/postgres/12::33
+corpusops/postgres/15 corpusops/postgres/14 corpusops/postgres/13 corpusops/postgres/12::33
 corpusops/postgres/11 corpusops/postgres/10 corpusops/postgres/9::33
+corpusops/postgis/15-3 corpusops/postgis/15-2.5 corpusops/postgis/15::33
+corpusops/postgis/14-3 corpusops/postgis/14-2.5 corpusops/postgis/14::33
 corpusops/postgis/13-3 corpusops/postgis/13-2.5 corpusops/postgis/13::33
 corpusops/postgis/12-3 corpusops/postgis/12-2.5 corpusops/postgis/12::33
 corpusops/postgis/11-3 corpusops/postgis/11-2.5 corpusops/postgis/11::33
@@ -309,12 +316,83 @@ corpusops/solr/latest corpusops/solr/8 corpusops/solr/7 corpusops/solr/6 corpuso
 corpusops/mariadb/10 corpusops/mariadb/10-bionic corpusops/mariadb/10-focal corpusops/mariadb/10-jessie::33
 corpusops/mariadb/5 corpusops/mariadb/5-trusty corpusops/mariadb/5-wheezy::33
 corpusops/mariadb/bionic corpusops/mariadb/focal corpusops/mariadb/jessie corpusops/mariadb/latest::33
+corpusops/mysql/5 corpusops/mysql/5.5 corpusops/mysql/5.6 corpusops/mysql/5.7::30
+corpusops/mysql/latest corpusops/mysql/debian::30
+corpusops/mysql/8 corpusops/mysql/8.0::30
 "
 SKIP_REFRESH_ANCESTORS=${SKIP_REFRESH_ANCESTORS-}
+POSTGIS_MINOR_TAGS="
+9.0-2.1
+9.1-2.2
+9.2-2.2 9.2-2.3
+9.2-2.3
+9.3-2.3 9.3-2.4
+9.4-2.3 9.4-2.4 9.5-2.4 9.6-2.4
+9.4-2.5 9.5-2.5 9.6-2.5
+10-2.4 10-2.5 10-3
+11-2.5 11-3
+12-3
+13-3
+14-3
+15-3
+"
+PGROUTING_MINOR_TAGS="
+15-3-3.4
+14-3-3.4
+13-3-3.4
+13-3-3.1
+12-3-3.1
+12-3-3.0
+11-3-3.1
+11-3-3.0
+11-2.5-2.6
+10-2.5-2.6
+9.6-2.5-2.6
+
+9.5-2.4-2.4
+9.5-2.4-2.5
+9.5-2.4-2.6
+9.6-2.4-2.4
+9.6-2.4-2.5
+9.6-2.4-2.6
+9.4-2.5-2.6
+9.5-2.5-2.4
+9.5-2.5-2.5
+9.5-2.5-2.6
+9.6-2.5-2.4
+9.6-2.5-2.5
+10-2.4-2.4
+10-2.4-2.5
+10-2.4-2.6
+10-2.5-2.4
+10-2.5-2.5
+12-2.5-2.6
+12-2.5-2.6
+12-2.5-2.6
+"
+POSTGRES_MAJOR="9 10 11 12 13 14 15"
+packagesUrlJessie='http://apt-archive.postgresql.org/pub/repos/apt/dists/jessie-pgdg/main/binary-amd64/Packages'
+packagesJessie="local/$(echo "$packagesUrlJessie" | sed -r 's/[^a-zA-Z.-]+/-/g')"
+packagesUrlStretch='http://apt-archive.postgresql.org/pub/repos/apt/dists/stretch-pgdg/main/binary-amd64/Packages'
+packagesStretch="local/$(echo "$packagesUrlStretch" | sed -r 's/[^a-zA-Z.-]+/-/g')"
+packagesUrlBuster='http://apt.postgresql.org/pub/repos/apt/dists/buster-pgdg/main/binary-amd64/Packages'
+packagesBuster="local/$(echo "$packagesUrlBuster" | sed -r 's/[^a-zA-Z.-]+/-/g')"
+packagesUrlBullseye='http://apt.postgresql.org/pub/repos/apt/dists/bullseye-pgdg/main/binary-amd64/Packages'
+packagesBullseye="local/$(echo "$packagesUrlBullseye" | sed -r 's/[^a-zA-Z.-]+/-/g')"
+
+PGROUTING_REPO="${PGROUTING_REPO:-"https://salsa.debian.org/debian-gis-team/pgrouting.git"}"
+PGROUTING_UPSTREAM_REPO="${PGROUTING_UPSTREAM_REPO:-"https://github.com/pgRouting/pgrouting.git"}"
 
 declare -A duplicated_tags
 declare -A registry_tokens
 declare -A registry_services
+declare -A postgis_alpine_vers
+postgis_alpine_vers[2.3]="2.3.11"
+postgis_alpine_vers[2.3.11]="98b4bde783d6d2cda01ac268317ef83210370253f41c9dc937adeea2aa443dc3"
+postgis_alpine_vers[2.4]="2.4.9"
+postgis_alpine_vers[2.4.9]="77ba24bf8fbbfa65881d7d24bd6379f2001fff781d6ff512590bfaf16e605288"
+postgis_alpine_vers[2.5]="2.5.5"
+postgis_alpine_vers[2.5.5]="24b15ee36f3af02015da0e92a18f9046ea0b4fd24896196c8e6c2aa8e4b56baa"
 
 is_on_build() { echo "$@" | grep -E -iq "on.*build"; }
 slashcount() { local _slashcount="$(echo "${@}"|sed -e 's![^/]!!g')";echo ${#_slashcount}; }
@@ -475,7 +553,7 @@ gen_image() {
         local df="$folder/Dockerfile.override"
         if [ -e "$df" ];then dockerfiles="$dockerfiles $df" && break;fi
     done
-    local parts="from args argspost helpers pre base post clean cleanpost extra labels labelspost"
+    local parts="from args argspost helpers pre base post postextra clean clean cleanpost extra labels labelspost"
     for order in $parts;do
         for folder in . .. ../../..;do
             local df="$folder/Dockerfile.$order"
@@ -505,11 +583,9 @@ is_skipped() {
     # fi
     return $ret
 }
-# echo $(set -x && is_skipped library/redis/3.0.4-32bit;echo $?)
-# exit 1
 
 skip_local() {
-    grep -E -v "(.\/)?local"
+    grep -E -v "(.\/)?local|\.git"
 }
 
 #  get_namespace_tag libary/foo/bar : get image tag with its final namespace
@@ -539,6 +615,13 @@ do_get_namespace_tag() {
     done
 }
 
+
+filter_tags() {
+    for j in $@ ;do for i in $j;do
+        if is_skipped "$n:$i";then debug "Skipped: $n:$i";else printf "$i\n";fi
+    done;done | awk '!seen[$0]++' | sort -V
+}
+
 do_get_image_tags() { get_image_tags "$@"; }
 get_image_tags() {
     local n=$1
@@ -565,28 +648,50 @@ get_image_tags() {
         printf "$results\n" | xargs -n 1 | sed -e "s/ //g" | sort -V > "$t.raw"
     fi
     # cleanup elastic minor images (keep latest)
-    ONE_MINOR="elasticsearch"
-    if ( echo $t | grep -E -q "$ONE_MINOR" );then
-        atags="$(cat $t.raw)"
-        for ix in $(seq 0 15);do
-            for j in $(seq 0 30);do
-                mv="$(  (( echo "$atags" | grep -E "$ix\.$j\." | grep -v alpine ) || true )|sort -V )"
-                amv="$( (( echo "$atags" | grep -E "$ix\.$j\." | grep    alpine ) || true )|sort -V )"
-                for selected in "$mv" "$amv";do
+    atags="$(filter_tags "$(cat $t.raw)")"
+    changed=
+    if ( echo $t | grep -E -q "$ONLY_ONE_MINOR" );then
+        oomt=""
+        for ix in $(seq 0 30);do
+            if ! ( echo "$atags" | grep -E -q "^$ix\." );then continue;fi
+            for j in $(seq 0 99);do
+                if ! ( echo "$atags" | grep -E -q "^$ix\.${j}\." );then continue;fi
+                for flavor in "" \
+                    alpine alpine3.13 alpine3.14 alpine3.15 alpine3.16 alpine3.5 \
+                    trusty xenial bionic focal jammy \
+                    bullseye stretch buster jessie \
+                    ;do
+                    selected=""
+                    if [[ -z "$flavor" ]];then
+                        selected="$( (( echo "$atags" | grep -E "$ix\.$j\.[0-9]+$" )    || true )|sort -V )"
+                    else
+                        if ! ( echo "$atags" | grep -E -q "$ix\.$j\..*$flavor$" );then continue;fi
+                        for k in $(seq 0 99);do
+                            v=$( (( echo "$atags" | grep -E "$ix\.$j\.${k}.*$flavor$" ) || true )|sort -V )
+                            if [[ -n $v ]];then
+                                if [[ -n $selected ]];then selected="$selected $v";else selected="$v";fi
+                            fi
+                        done
+                    fi
                     if [[ -n "$selected" ]];then
                         for l in $(echo "$selected"|sed -e "$ d");do
-                            SKIPPED_TAGS="$SKIPPED_TAGS|${ONE_MINOR}:$l$"
+                            if [[ -z $oomt ]];then
+                                oomt="$l$"
+                            else
+                                oomt="$oomt|$l"
+                            fi
                         done
                     fi
                 done
             done
+            if [[ -n $oomt ]];then
+                SKIPPED_TAGS="$SKIPPED_TAGS|(($ONLY_ONE_MINOR):($oomt)$)"
+            fi
         done
     fi
     if [[ -z ${SKIP_TAGS_REBUILD} ]];then
-    rm -f "$t"
-    ( for j in $(cat "$t.raw");do for i in $j;do
-        if is_skipped "$n:$i";then debug "Skipped: $n:$i";else printf "$i\n";fi
-      done;done | awk '!seen[$0]++' | sort -V ) >> "$t"
+        rm -f "$t"
+        filter_tags "$atags" > $t
     fi
     set -e
     if [ -e "$t" ];then cat "$t";fi
@@ -635,8 +740,7 @@ do_refresh_images() {
         git clone https://github.com/corpusops/docker-images local/docker-images
     fi
     ( cd local/docker-images && git fetch --all && git reset --hard origin/master \
-      && cp -rf helpers        rootfs packages ../..; )
-#      && cp -rf helpers Dock* rootfs packages ../..; )
+      && cp -rf helpers Dock* rootfs packages ../..; )
     fi
     fi
     while read images;do
