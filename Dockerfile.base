@@ -1,12 +1,30 @@
-ADD ./db_smart_backup/ /srv/dbs/
-RUN sh -exc ': \
-    && NONINTERACTIVE=1 WANTED_EXTRA_PACKAGES="hostname xz xz-utils ca-certificates jq curl" WANT_UPDATE=1 cops_pkgmgr_install.sh git \
-    && cd /srv/dbs && git reset --hard $DBSMARTBACKUP_VERSION \
-    && cp *sh /bin \
-    && mkdir /etc/dbsmartbackup \
-    && cd / && rm -rf /srv/dbs'
-# workaround for https://github.com/moby/moby/issues/42148
-## ADD rootfs/ /
-RUN --mount=type=bind,from=rootfs,target=/s bash -exc 'for i in /s/rootfs/*;do cp -frv $i/. /$(basename $i)/;done'
-ENTRYPOINT ["dbs-entry.sh"]
-CMD []
+RUN sh -c 'set -ex \
+    && cd /tmp/corpusopssteroids \
+    && : \
+    && chmod +x *sh \
+    && if [ ! -e $COPS_HELPERS ];then mkdir -p "$COPS_HELPERS";fi \
+    && export PATH=$(pwd):$PATH \
+    && _cops_SYSTEM=$(./system_detect.sh) \
+    && cat ${_cops_SYSTEM}_optional_packages*.txt optional_packages*.txt > optional_packages.txt \
+    && cat ${_cops_SYSTEM}_packages*.txt > packages.txt \
+    && : fix logrorate global conf \
+    && if [ -e /var/log ];then touch /var/log/syslog /var/log/messages;fi \
+    && ./${_cops_SYSTEM}_up.sh \
+    && ./add_opt_pkgs.sh \
+    && ./add_frep.sh \
+    && ./add_remco.sh \
+    && ./add_confd.sh \
+    && ./add_dockerize.sh \
+    && ./add_gosu.sh \
+    && ./add_forego.sh \
+    && ln -sfv ${COPS_HELPERS}/supervisord-go /bin/supervisord-go \
+    && DEBUG=1 ./setup_locales.sh \
+    && sed -i -re "/var\\/log\\/messages \\{\\}/d" /etc/logrotate.conf\
+    && sed -i -re "s/ dateext/nodateext/g" /etc/logrotate.conf\
+    && if ! (grep -q /var/log/messages /etc/logrotate.conf);then\
+           printf "\\n/var/log/messages {\\nmissingok\\n}\\n\\n" >>/etc/logrotate.conf;fi\
+    && for i in bin/* system_detect.sh setup_locales.sh cops_pkgmgr_install.sh;do j=$(basename $i);cp -v $i /cops_helpers && ln -sfv /cops_helpers/$j /bin/$j;done\
+    && ./${_cops_SYSTEM}_clean.sh \
+    '
+COPY --from=ochinchina/supervisord:latest \
+    /usr/local/bin/supervisord ${COPS_HELPERS}/supervisord-go

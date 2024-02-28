@@ -28,6 +28,7 @@
 3.7-xenial
 4
 4-bionic
+4-focal
 4-xenial
 4.0
 4.0-bionic
@@ -39,7 +40,15 @@
 4.2-bionic
 4.4
 4.4-bionic
+4.4-focal
+5
+5-focal
+5.0
+5.0-focal
+6
+6-focal
 bionic
+focal
 jessie
 latest
 unstable
