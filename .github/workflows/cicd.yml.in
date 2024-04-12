@@ -21,8 +21,8 @@ jobs:
     steps:
       - name: Set vars
         run: |-
-            if ( echo "$GITHUB_REF" | egrep -q "${RELEASABLE_BRANCHES}" ) \
-            && ( echo "$GITHUB_REPOSITORY" | egrep -q "${RELEASABLE_REPOS}" )
+            if ( echo "$GITHUB_REF" | grep -E -q "${RELEASABLE_BRANCHES}" ) \
+            && ( echo "$GITHUB_REPOSITORY" | grep -E -q "${RELEASABLE_REPOS}" )
             then releasable=true;else releasable=false;fi
             echo "releasable=$releasable" >> $GITHUB_OUTPUT
             echo "silent=$(echo $silent)" >> $GITHUB_OUTPUT
@@ -49,11 +49,12 @@ jobs:
           key: 6-${{ runner.os }}-${{ github.ref }}-${{ github.repository }}-venvstatics
       - name: setup
         run: set -e;i=$(whoami);sudo sh -c "chown -Rf $i .";
-             ./main.sh refresh_corpusops;
+             sudo sh -c 'sed -i -re 's/azure.//' /etc/apt/sources.list && apt-get update -qq' && ./main.sh refresh_corpusops;
              sudo sh -c 'apt-get update -qq && apt-get install -qqy --force-yes parallel'
       - name: refresh images
+              #rm -f */*/*/Dockerfile&&${{steps.v.outputs.silent}} ./refresh_images.sh;
         run: set -e;if (echo $IMAGES|grep -q zleftover);then
-             rm -f */*/*/Dockerfile&&${{steps.v.outputs.silent}} ./refresh_images.sh;
+              rm -f */*/*/Dockerfile&&./refresh_images.sh;
              fi
       - name: build & release
         run: set -e;
