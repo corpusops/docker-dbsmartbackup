@@ -63,7 +63,7 @@ if [ "x${DISTRIB_ID}" = "xcentos" ] && ( echo  "${DISTRIB_MAJOR}" | grep -Eq "^(
 fi
 if ( echo $DISTRIB_ID | grep -E -iq "centos|red|fedora" );then
     if (echo $DISTRIB_ID|grep -E -iq centos);then
-        if [ "$DISTRIB_RELEASE" = "7" ];then
+        if (echo "$DISTRIB_RELEASE"|egrep -q "8|7");then
             OCENTOSMIRROR="${OCENTOSMIRROR:-mirror.centos.org}"
             NCENTOSMIRROR="${NCENTOSMIRROR:-vault.centos.org}"
         elif [ $DISTRIB_RELEASE -le $CENTOS_OLDSTABLE ];then
@@ -267,6 +267,10 @@ if ( echo "$DISTRIB_ID $DISTRIB_RELEASE $DISTRIB_CODENAME" | grep -E -iq alpine 
     fi
 fi
 ./bin/fix_letsencrypt.sh
+if ( echo $DISTRIB_ID | grep -E -iq "centos|red|fedora|amzn" );then
+    # ensure no conflict between curl & curl-minimal
+    yum install -y --allowerasing curl || yum install -y curl
+fi
 export FORCE_INSTALL=y
 DO_UPDATE="$DO_UPDATE" WANTED_PACKAGES="$pkgs" ./cops_pkgmgr_install.sh
 install_gpg
@@ -278,4 +282,4 @@ if ! ( echo foo|envsubst >/dev/null 2>&1);then
     fi
 fi
 find /etc/rsyslog.d -name "*.conf" -not -type d |while read f;do mv -vf "$f" "$f.sample";done
-# vim:set et sts=4 ts=4 tw=0:
+# Vim:set et sts=4 ts=4 tw=0:
