@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-set -ex
+set -e
 if ( echo "${DBS_ENABLED:-1}${DBS_DISABLED:-0}" | grep -Eiq "^(0|n|f).|.(1|t|y)$"; );then
     while true;do
         echo "DBS is disabled, looping in noop"
