@@ -7,11 +7,12 @@ ARG NONINTERACTIVE=1
 ARG DBSMARTBACKUP_VERSION=origin/master
 ENV DBSMARTBACKUP_VERSION=$DBSMARTBACKUP_VERSION
 #dbs special image
+USER root
 RUN sh -exc 'pkgs="jq" &&\
     if ( apt-get --version >/dev/null 2>&1; );then\
-        pkgs="$pkgs xz-utils";\
+        pkgs="$pkgs xz-utils sudo";\
     else\
-        pkgs="$pkgs xz";\
+        pkgs="$pkgs xz sudo";\
     fi\
     && NONINTERACTIVE=1 WANT_UPDATE=1 cops_pkgmgr_install.sh $pkgs'
 #dbs special image
