@@ -72,7 +72,7 @@ jobs:
         - "corpusops/mariadb/11 corpusops/mariadb/11.0 corpusops/mariadb/11.1 corpusops/mariadb/11.2 corpusops/mariadb/11.3 corpusops/mariadb/11.4 corpusops/mariadb/11.5 corpusops/mariadb/latest corpusops/mariadb/lts"
         - "corpusops/mongo/4 corpusops/mongo/5"
         - "corpusops/mongo/6 corpusops/mongo/7"
-        - "corpusops/mongo/3 corpusops/mongo/4"
+        - "corpusops/mongo/4"
         - "corpusops/mysql/latest corpusops/mysql/oracle corpusops/mysql/debian corpusops/mysql/lts"
         - "corpusops/mysql/9-oracle corpusops/mysql/9"
         - "corpusops/mysql/8-debian corpusops/mysql/8-oracle corpusops/mysql/8"
