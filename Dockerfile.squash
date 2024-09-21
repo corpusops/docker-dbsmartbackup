@@ -1,0 +1,11 @@
+FROM ${_cops_BASE}:${_cops_VERSION} AS final
+FROM scratch AS files
+ADD ./rootfs/ /rootfs/
+ADD ./db_smart_backup/ /srv/dbs/
+FROM $RSYNC AS squashed-rsync
+FROM $ANCESTOR AS squashed-ancestor
+ARG ROOTFS="/BASE_ROOTFS_TO_COPY_THAT_WONT_COLLIDE_1234567890"
+ARG PATH="${ROOTFS}_rsync/bin:$PATH"
+ARG NONINTERACTIVE=1
+ARG DBSMARTBACKUP_VERSION=origin/master
+ENV DBSMARTBACKUP_VERSION=$DBSMARTBACKUP_VERSION
