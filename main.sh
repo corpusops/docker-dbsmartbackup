@@ -242,7 +242,6 @@ SKIP_OS="$SKIP_OS|((debian|redis):[0-9]+\.[0-9]+.*)"
 SKIP_OS="$SKIP_OS|(centos:.\..\.....|centos.\..\.....)"
 SKIP_OS="$SKIP_OS|(alpine:.\.[0-9]+\.[0-9]+)"
 SKIP_OS="$SKIP_OS|(debian:(6.*|squeeze))"
-SKIP_OS="$SKIP_OS|(ubuntu:(([0-9][0-9]\.[0-9][0-9]\..*)|(14.10|12|10|11|13|15)))"
 SKIP_OS="$SKIP_OS|(lucid|maverick|natty|precise|quantal|raring|saucy)"
 SKIP_OS="$SKIP_OS|(centos:(centos)?5)"
 SKIP_OS="$SKIP_OS|(fedora.*(modular|21))"
@@ -261,29 +260,34 @@ SKIPPED_TAGS="$SKIP_TF|$SKIP_MINOR_OS|$SKIP_NODE|$SKIP_DOCKER|$SKIP_MINIO|$SKIP_
 CURRENT_TS=$(date +%s)
 IMAGES_SKIP_NS="((mailhog|postgis|pgrouting(-bare)?|^library|dejavu|(minio/(minio|mc))))"
 
-MONGO_SKIPPED_TAGS="mongo:(2|3\.[0-9]+)"
-SKIP_POSTGIS="$SKIP_MISC|$SKIP_PRE|postgis.*:(.*1[3-9].-[0-3]|9|10|11)\.|.*alpine.*)"
-SKIP_PGROUTING="$SKIP_MISC|$SKIP_PRE|routing:(9|10|11)\.|:.*alpine.*|11-3-3.0"
-SKIP_POSTGRES="$SKIP_MISC|$SKIP_PRE|pgrouting.*1[3-9].*3.0|alpine|postgres:(.*(bullseye|buster|stretch|jessie)|.*beta.*|.*alpine3.*|.*alpine.*|9\.[0-9]+\.[0-9]+.*|9\.0|8.*|1[0-9]\.[0-9].*)$"
-ES_SKIPPED_TAGS="elasticsearch:(([0-4]\.?){3}(-32bit.*)?|2\.[0-3]\.|1\.[3-7]|1|2.*|5-alpine|5.0|5.1|5.2|5.3|5.4|5.5|5\.[0-5]\..*|6\.[1-10]|7\.[0-10])"
 SOLR_SKIPPED_TAGS="solr.*[0-9]+[.][0-9]+[.].*|$MINOR_IMAGES:(.*solr)"
-MYSQL_SKIPPED_TAGS="mysql:[0-9]+\.[0-9]+\.[0-9]+"
-
 SKIP_OLD_PG="postgis:9\.(2|3|4|5|6)\.[0-9]+"
 
-SKIPPED_TAGS="$ES_SKIPPED_TAGS|$SOLR_SKIPPED_TAGS|$MYSQL_SKIPPED_TAGS|$SKIP_POSTGRES|$SKIP_PGROUTING|$MONGO_SKIPPED_TAGS|$SKIP_OLD_PG"
-#SKIP_MINOR_OS|$SKIP_MINOR_ES|$SKIP_PRE|$SKIP_MINOR"
-
+#
+MYSQL_SKIPPED_TAGS="mysql:([0-9]+\.[0-9]+\.[0-9]+|5$|5.*oracle|5\.[567]$)"
+MONGO_SKIPPED_TAGS="mongo:(rc|2|(3|4|5|6|7)\.[0-9]+|.*(noble|xenial|bionic|stretch|jessie|focal|jammy|windows|nano|-rc|[0-9]+\.[0-9]+\.[0-9]+).*)"
+MARIADB_SKIPPED_TAGS="mariadb:(rc|beta|alpha|[^.]+\.[^.]+\.|.*-rc|.*trusty|10.1-bionic|.*jessie|5|10.0|10.1|.*-ubi[012345789]?|(.*(jammy|bionic|noble|focal)))"
+ES_SKIPPED_TAGS="elasticsearch:(.*alpine.*|0|1|2|3|4|5\.[0-5]|[0-9+]\.[0-9]+\.[0-9]+.*)"
+ES_PROTECTED_VERSIONS="elasticsearch:(5|5.6|6.8.23|7.14.2|7.17.24|8.15.1)$"
+OPENSEARCH_PROTECTED_VERSIONS="opensearch:(1|1.0.0|1.0.1|1.1.0|1.2.0|1.2.1|1.2.2|1.2.3|1.2.4|2|2.15.0|2.4.0|latest)$"
+POSTGRES_SKIPPED_TAGS="postgres(-bare)?:(1[2-5]\.|((8|9|10|11)($|\.|-|$))|.*(rc|bullseye|buster|bookworm|stretch|jessie|alpine|beta))"
+PGROUTING_SKIPPED_TAGS="pgrouting(-bare)?:(((8|9|10|11)($|\.|-|$))|.*(rc|bullseye|buster|bookworm|stretch|jessie|alpine|beta))"
+POSTGIS_SKIPPED_TAGS="postgis(-bare)?:(((8|9|10|11)($|\.|-|$))|.*(rc|bullseye|buster|bookworm|stretch|jessie|alpine|beta))"
+SOLR_SKIPPED_TAGS="solr:(5\.[0-4]|6\.[0-5]|7\.[0-6]|8\.[0-8]|9\.[0-6]|.*[0-9]+\.[0-9]+\..*)"
+SLAPD_SKIPPED_TAGS="slapd:(old|.*no-squash)"
+SKIPPED_TAGS="$ES_SKIPPED_TAGS|$MARIADB_SKIPPED_TAGS|$MONGO_SKIPPED_TAGS|$MYSQL_SKIPPED_TAGS|$OPENSEARCH_PROTECTED_VERSIONS|$POSTGIS_SKIPPED_TAGS|$PGROUTING_SKIPPED_TAGS|$POSTGRES_SKIPPED_TAGS|$SOLR_SKIPPED_TAGS|$SLAPD_SKIPPED_TAGS"
+PROTECTED_VERSIONS="$ES_PROTECTED_VERSIONS|$OPENSEARCH_PROTECTED_VERSIONS"
 default_images="
-corpusops/opensearch
-corpusops/mariadb
-corpusops/mysql
-corpusops/postgres
-corpusops/solr
-corpusops/mongo
 corpusops/elasticsearch
+corpusops/mariadb
+corpusops/mongo
+corpusops/mysql
+corpusops/opensearch
 corpusops/pgrouting
 corpusops/postgis
+corpusops/postgres
+corpusops/slapd
+corpusops/solr
 "
 ONLY_ONE_MINOR="postgres|elasticsearch|nginx|opensearch"
 PROTECTED_TAGS="corpusops/rsyslog"
@@ -306,78 +310,164 @@ find_top_node() { (set +e && find_top_node_ && set -e;); }
 NODE_TOP="$(echo $(find_top_node))"
 MAILU_VERSiON=1.7
 
+
 BATCHED_IMAGES="\
-corpusops/opensearch/2.4.0 corpusops/opensearch/1.2.3 corpusops/opensearch/latest::44
-corpusops/slapd/latest::33
-corpusops/elasticsearch/7.14.2 corpusops/elasticsearch/6.8.9 corpusops/elasticsearch/5 corpusops/elasticsearch/2 corpusops/elasticsearch/1::33
-corpusops/postgres/15 corpusops/postgres/14 corpusops/postgres/13 corpusops/postgres/12::33
-corpusops/postgres/11 corpusops/postgres/10 corpusops/postgres/9::33
-corpusops/postgis/15-3 corpusops/postgis/15-2.5 corpusops/postgis/15::33
-corpusops/postgis/14-3 corpusops/postgis/14-2.5 corpusops/postgis/14::33
-corpusops/postgis/13-3 corpusops/postgis/13-2.5 corpusops/postgis/13::33
-corpusops/postgis/12-3 corpusops/postgis/12-2.5 corpusops/postgis/12::33
-corpusops/postgis/11-3 corpusops/postgis/11-2.5 corpusops/postgis/11::33
-corpusops/postgis/10-3 corpusops/postgis/10-2.5 corpusops/postgis/10-2.4 corpusops/postgis/10 corpusops/postgis/9::33
-corpusops/solr/slim corpusops/solr/8-slim corpusops/solr/7-slim corpusops/solr/6-slim corpusops/solr/5-slim::33
-corpusops/solr/latest corpusops/solr/8 corpusops/solr/7 corpusops/solr/6 corpusops/solr/5::33
-corpusops/mariadb/10 corpusops/mariadb/10-bionic corpusops/mariadb/10-focal corpusops/mariadb/10-jessie::33
-corpusops/mariadb/5 corpusops/mariadb/5-trusty corpusops/mariadb/5-wheezy::33
-corpusops/mariadb/bionic corpusops/mariadb/focal corpusops/mariadb/jessie corpusops/mariadb/latest::33
-corpusops/mysql/5 corpusops/mysql/5.5 corpusops/mysql/5.6 corpusops/mysql/5.7::30
-corpusops/mysql/latest corpusops/mysql/debian::30
-corpusops/mysql/8 corpusops/mysql/8.0::30
+corpusops/postgres/16\
+ corpusops/postgres/latest\
+ corpusops/postgis/16\
+ corpusops/postgis/16-3\
+ corpusops/postgis/latest::30
+corpusops/elasticsearch/5\
+ corpusops/elasticsearch/5.6\
+ corpusops/elasticsearch/6.8.23\
+ corpusops/elasticsearch/7.14.2\
+ corpusops/elasticsearch/7.17.24\
+ corpusops/elasticsearch/8.15.1\
+ corpusops/elasticsearch/latest::30
+corpusops/mariadb/10\
+ corpusops/mariadb/10.2\
+ corpusops/mariadb/10.3\
+ corpusops/mariadb/10.4\
+ corpusops/mariadb/10.5\
+ corpusops/mariadb/10.6\
+ corpusops/mariadb/10.7\
+ corpusops/mariadb/10.8\
+ corpusops/mariadb/10.9::30
+corpusops/mariadb/11\
+ corpusops/mariadb/11.0\
+ corpusops/mariadb/11.1\
+ corpusops/mariadb/11.2\
+ corpusops/mariadb/11.3\
+ corpusops/mariadb/11.4\
+ corpusops/mariadb/11.5\
+ corpusops/mariadb/latest\
+ corpusops/mariadb/lts::30
+corpusops/mongo/4\
+ corpusops/mongo/5::30
+corpusops/mongo/6\
+ corpusops/mongo/7::30
+corpusops/mongo/3\
+ corpusops/mongo/2\
+ corpusops/mongo/4::7
+corpusops/mysql/latest\
+ corpusops/mysql/oracle\
+ corpusops/mysql/debian\
+ corpusops/mysql/lts::7
+corpusops/mysql/9-oracle\
+ corpusops/mysql/9::7
+corpusops/mysql/8-debian\
+ corpusops/mysql/8-oracle\
+ corpusops/mysql/8::7
+corpusops/mysql/5-debian\
+ corpusops/mysql/5-oracle\
+ corpusops/mysql/5::7
+corpusops/opensearch/1\
+ corpusops/opensearch/1.0.0\
+ corpusops/opensearch/1.0.1\
+ corpusops/opensearch/1.1.0\
+ corpusops/opensearch/1.2.0\
+ corpusops/opensearch/1.2.1\
+ corpusops/opensearch/1.2.2\
+ corpusops/opensearch/1.2.3\
+ corpusops/opensearch/1.2.4\
+ corpusops/opensearch/2\
+ corpusops/opensearch/2.4.0\
+ corpusops/opensearch/2.15.0\
+ corpusops/opensearch/latest::30
+corpusops/pgrouting/12\
+ corpusops/pgrouting/12-2.5-2.6\
+ corpusops/pgrouting/12-3\
+ corpusops/pgrouting/12-3-3.0\
+ corpusops/pgrouting/12-3-3.1\
+ corpusops/pgrouting/13\
+ corpusops/pgrouting/13-3\
+ corpusops/pgrouting/13-3-3.0\
+ corpusops/pgrouting/13-3-3.1\
+ corpusops/pgrouting/13-3-3.4\
+ corpusops/pgrouting/14-3\
+ corpusops/pgrouting/14-3-3.4::30
+corpusops/pgrouting/15-3\
+ corpusops/pgrouting/15-3-3.4\
+ corpusops/pgrouting/15-3-3.5\
+ corpusops/pgrouting/15-3-3.6::30
+corpusops/pgrouting/16-3\
+ corpusops/pgrouting/16-3-3.4\
+ corpusops/pgrouting/16-3-3.5\
+ corpusops/pgrouting/16-3-3.6\
+ corpusops/pgrouting/latest::30
+corpusops/postgis/12\
+ corpusops/postgis/12-2.5\
+ corpusops/postgis/12-3\
+ corpusops/postgis/13\
+ corpusops/postgis/13-2.5\
+ corpusops/postgis/13-3\
+ corpusops/postgis/14\
+ corpusops/postgis/14-3\
+ corpusops/postgis/15\
+ corpusops/postgis/15-3::30
+corpusops/postgres/12\
+ corpusops/postgres/13\
+ corpusops/postgres/14\
+ corpusops/postgres/15::30
+corpusops/postgres/16.0\
+ corpusops/postgres/16.1\
+ corpusops/postgres/16.2\
+ corpusops/postgres/16.3\
+ corpusops/postgres/16.4::30
+corpusops/slapd/18.04\
+ corpusops/slapd/20.04\
+ corpusops/slapd/22.04\
+ corpusops/slapd/24.04\
+ corpusops/slapd/latest::30
+corpusops/solr/5\
+ corpusops/solr/5-alpine\
+ corpusops/solr/5-slim\
+ corpusops/solr/5.5\
+ corpusops/solr/5.5-alpine\
+ corpusops/solr/5.5-slim\
+ corpusops/solr/6\
+ corpusops/solr/6-alpine\
+ corpusops/solr/6-slim\
+ corpusops/solr/6.6\
+ corpusops/solr/6.6-alpine\
+ corpusops/solr/6.6-slim\
+ corpusops/solr/7::30
+corpusops/solr/7-alpine\
+ corpusops/solr/7-slim\
+ corpusops/solr/7.7\
+ corpusops/solr/7.7-alpine\
+ corpusops/solr/7.7-slim\
+ corpusops/solr/8\
+ corpusops/solr/8-alpine\
+ corpusops/solr/8-slim\
+ corpusops/solr/8.9\
+ corpusops/solr/8.9-slim\
+ corpusops/solr/alpine\
+ corpusops/solr/latest\
+ corpusops/solr/slim::30
 "
 SKIP_REFRESH_ANCESTORS=${SKIP_REFRESH_ANCESTORS-}
 POSTGIS_MINOR_TAGS="
-9.0-2.1
-9.1-2.2
-9.2-2.2 9.2-2.3
-9.2-2.3
-9.3-2.3 9.3-2.4
-9.4-2.3 9.4-2.4 9.5-2.4 9.6-2.4
-9.4-2.5 9.5-2.5 9.6-2.5
-10-2.4 10-2.5 10-3
-11-2.5 11-3
 12-3
 13-3
 14-3
 15-3
+16-3
 "
 PGROUTING_MINOR_TAGS="
+16-3-3.4
 15-3-3.4
 14-3-3.4
 13-3-3.4
 13-3-3.1
 12-3-3.1
 12-3-3.0
-11-3-3.1
-11-3-3.0
-11-2.5-2.6
-10-2.5-2.6
-9.6-2.5-2.6
 
-9.5-2.4-2.4
-9.5-2.4-2.5
-9.5-2.4-2.6
-9.6-2.4-2.4
-9.6-2.4-2.5
-9.6-2.4-2.6
-9.4-2.5-2.6
-9.5-2.5-2.4
-9.5-2.5-2.5
-9.5-2.5-2.6
-9.6-2.5-2.4
-9.6-2.5-2.5
-10-2.4-2.4
-10-2.4-2.5
-10-2.4-2.6
-10-2.5-2.4
-10-2.5-2.5
 12-2.5-2.6
 12-2.5-2.6
 12-2.5-2.6
 "
-POSTGRES_MAJOR="9 10 11 12 13 14 15"
+POSTGRES_MAJOR="12 13 14 15 16"
 packagesUrlJessie='http://apt-archive.postgresql.org/pub/repos/apt/dists/jessie-pgdg/main/binary-amd64/Packages'
 packagesJessie="local/$(echo "$packagesUrlJessie" | sed -r 's/[^a-zA-Z.-]+/-/g')"
 packagesUrlStretch='http://apt-archive.postgresql.org/pub/repos/apt/dists/stretch-pgdg/main/binary-amd64/Packages'
@@ -561,7 +651,7 @@ gen_image() {
         if [ -e "$df" ];then dockerfiles="$dockerfiles $df" && break;fi
     done
     local parts=""
-    for partsstep in from args argspost helpers pre base post postextra clean cleanpost extra labels labelspost;do
+    for partsstep in squashpre from args argspost helpers pre base post postextra clean cleanpost predosquash squash squashpreexec squashexec postdosquash extra labels labelspost;do
         parts="$parts pre_${partsstep} ${partsstep} post_${partsstep}"
     done
     parts=$(echo "$parts"|xargs)
@@ -578,12 +668,12 @@ gen_image() {
     else
         debug "Using dockerfiles: $dockerfiles from $_cops_IMG"
     fi
+    cat $dockerfiles | envsubst '$_cops_BASE;$_cops_VERSION;' > Dockerfile
     if ( echo $_cops_BASE|grep -q elastic);then
-        if (ver_ge $_cops_VERSION 8.0.0 );then
-            dockerfiles="$dockerfiles ../Dockerfile.user"
+        if ! (ver_ge $_cops_VERSION 8.0.0 );then
+            sed -i -re "/^USER.*elasticsearch/d" Dockerfile
         fi
     fi
-    cat $dockerfiles | envsubst '$_cops_BASE;$_cops_VERSION;' > Dockerfile
     cd - &>/dev/null
 }
 ### end - docker remote api
@@ -591,6 +681,10 @@ gen_image() {
 is_skipped() {
     local ret=1 t="$@"
     if [[ -z $SKIPPED_TAGS ]];then return 1;fi
+    if [[ -n "${PROTECTED_VERSIONS}" ]] && ( echo "$t" | grep -E -q "$PROTECTED_VERSIONS" );then
+        debug "$t is protected, no skip"
+        return 1
+    fi
     if ( echo "$t" | grep -E -q "$SKIPPED_TAGS" );then
         ret=0
     fi
@@ -631,7 +725,6 @@ do_get_namespace_tag() {
     done
 }
 
-
 filter_tags() {
     for j in $@ ;do for i in $j;do
         if is_skipped "$n:$i";then debug "Skipped: $n:$i";else printf "$i\n";fi
@@ -666,16 +759,16 @@ get_image_tags() {
     # cleanup elastic minor images (keep latest)
     atags="$(filter_tags "$(cat $t.raw)")"
     changed=
-    if ( echo $t | grep -E -q "$ONLY_ONE_MINOR" );then
+    if [[ "x${ONLY_ONE_MINOR}" != "x" ]] && ( echo $n | grep -E -q "$ONLY_ONE_MINOR" );then
         oomt=""
-        for ix in $(seq 0 30);do
+        for ix in $(seq 0 99);do
             if ! ( echo "$atags" | grep -E -q "^$ix\." );then continue;fi
             for j in $(seq 0 99);do
                 if ! ( echo "$atags" | grep -E -q "^$ix\.${j}\." );then continue;fi
                 for flavor in "" \
                     alpine alpine3.13 alpine3.14 alpine3.15 alpine3.16 alpine3.5 \
-                    trusty xenial bionic focal jammy \
-                    bullseye stretch buster jessie \
+                    trusty xenial bionic focal jammy noble \
+                    bookworm bullseye stretch buster jessie \
                     ;do
                     selected=""
                     if [[ -z "$flavor" ]];then
@@ -691,10 +784,12 @@ get_image_tags() {
                     fi
                     if [[ -n "$selected" ]];then
                         for l in $(echo "$selected"|sed -e "$ d");do
-                            if [[ -z $oomt ]];then
-                                oomt="$l$"
-                            else
-                                oomt="$oomt|$l"
+                            if [[ -z "${PROTECTED_VERSIONS}" ]] || ! ( echo "$n:$l" | grep "${PROTECTED_VERSIONS}" );then
+                                if [[ -z $oomt ]];then
+                                    oomt="$l$"
+                                else
+                                    oomt="$oomt|$l"
+                                fi
                             fi
                         done
                     fi
@@ -707,7 +802,7 @@ get_image_tags() {
     fi
     if [[ -z ${SKIP_TAGS_REBUILD} ]];then
         rm -f "$t"
-        filter_tags "$atags" > $t
+        filter_tags "$atags" > "$t"
     fi
     set -e
     if [ -e "$t" ];then cat "$t";fi
@@ -752,10 +847,9 @@ do_refresh_images() {
     if [ ! -e local/docker-images ];then
         git clone https://github.com/corpusops/docker-images local/docker-images
     fi
+# XXX: dbsmartbackup has its own set of Dockerfiles
     ( cd local/docker-images && git fetch --all && git reset --hard origin/master \
       && cp -rf helpers rootfs packages ../..; )
-# XXX: dbsmartbackup has its own set of Dockerfiles
-#      && cp -rf helpers Dock* rootfs packages ../..; )
     fi
     fi
     while read images;do
@@ -795,20 +889,20 @@ is_same_commit_label() {
     return $ret
 }
 
-get_docker_squash_args() {
-    DOCKER_DO_SQUASH=${DOCKER_DO_SQUASH-init}
-    if ! ( echo "${NO_SQUASH-}"|grep -E -q "^(no)?$" );then
-        DOCKER_DO_SQUASH=""
-        log "no squash"
-    elif [[ "$DOCKER_DO_SQUASH" = init ]];then
-        DOCKER_DO_SQUASH="--squash"
-        if ! (printf "FROM alpine\nRUN touch foo\n" | docker build --squash - >/dev/null 2>&1 );then
-            DOCKER_DO_SQUASH=
-            log "docker squash isnt not supported"
-        fi
-    fi
-    echo $DOCKER_DO_SQUASH
-}
+#get_docker_squash_args() {
+#    DOCKER_DO_SQUASH=${DOCKER_DO_SQUASH-init}
+#    if ! ( echo "${NO_SQUASH-}"|grep -E -q "^(no)?$" );then
+#        DOCKER_DO_SQUASH=""
+#        log "no squash"
+#    elif [[ "$DOCKER_DO_SQUASH" = init ]];then
+#        DOCKER_DO_SQUASH="--squash"
+#        if ! (printf "FROM alpine\nRUN touch foo\n" | docker build --squash - >/dev/null 2>&1 );then
+#            DOCKER_DO_SQUASH=
+#            log "docker squash isnt not supported"
+#        fi
+#    fi
+#    echo $DOCKER_DO_SQUASH
+#}
 
 record_build_image() {
     # library/ubuntu/latest / corpusops/postgis/latest
@@ -824,7 +918,7 @@ record_build_image() {
         log "Image $itag is update to date, skipping build"
         return
     fi
-    dargs="${DOCKER_BUILD_ARGS-} $(get_docker_squash_args)"
+    dargs="${DOCKER_BUILD_ARGS-}"
     local dbuild="cat $image/$df|docker build ${dargs-}  -t $itag . -f - --build-arg=DOCKER_IMAGES_COMMIT=$git_commit"
     local retries=${DOCKER_BUILD_RETRIES:-2}
     local cmd="dret=8 && for i in \$(seq $retries);do if ($dbuild);then dret=0;break;else dret=6;fi;done"

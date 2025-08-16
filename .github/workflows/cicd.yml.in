@@ -69,20 +69,15 @@ jobs:
         #- "corpusops/test/a corpusops/test/b corpusops/test/c"
         # all images that werent explicitly told to be built would be built in the next batches
         # we span them onto N jobs
-        - "zleftover:1/14"
-        - "zleftover:2/14"
-        - "zleftover:3/14"
-        - "zleftover:4/14"
-        - "zleftover:5/14"
-        - "zleftover:6/14"
-        - "zleftover:7/14"
-        - "zleftover:8/14"
-        - "zleftover:9/14"
-        - "zleftover:10/14"
-        - "zleftover:11/14"
-        - "zleftover:12/14"
-        - "zleftover:13/14"
-        - "zleftover:14/14"
+        - "zleftover:1/8"
+        - "zleftover:2/8"
+        - "zleftover:3/8"
+        - "zleftover:4/8"
+        - "zleftover:5/8"
+        - "zleftover:6/8"
+        - "zleftover:7/8"
+        - "zleftover:8/8"
+
 on:
   push:
   workflow_dispatch:
