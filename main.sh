@@ -265,7 +265,7 @@ SKIP_OLD_PG="postgis:9\.(2|3|4|5|6)\.[0-9]+"
 
 #
 MYSQL_SKIPPED_TAGS="mysql:([0-9]+\.[0-9]+\.[0-9]+|5$|5.*oracle|5\.[567]$)"
-MONGO_SKIPPED_TAGS="mongo:(rc|2|(3|4|5|6|7)\.[0-9]+|.*(noble|xenial|bionic|stretch|jessie|focal|jammy|windows|nano|-rc|[0-9]+\.[0-9]+\.[0-9]+).*)"
+MONGO_SKIPPED_TAGS="mongo:(rc|2|3|(4|5|6|7)\.[0-9]+|.*(unstable|noble|xenial|bionic|stretch|jessie|focal|jammy|windows|nano|-rc|[0-9]+\.[0-9]+\.[0-9]+).*)"
 MARIADB_SKIPPED_TAGS="mariadb:(rc|beta|alpha|[^.]+\.[^.]+\.|.*-rc|.*trusty|10.1-bionic|.*jessie|5|10.0|10.1|.*-ubi[012345789]?|(.*(jammy|bionic|noble|focal)))"
 ES_SKIPPED_TAGS="elasticsearch:(.*alpine.*|0|1|2|3|4|5\.[0-5]|[0-9+]\.[0-9]+\.[0-9]+.*)"
 ES_PROTECTED_VERSIONS="elasticsearch:(5|5.6|6.8.23|7.14.2|7.17.24|8.15.1)$"
