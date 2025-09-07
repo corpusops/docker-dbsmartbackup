@@ -67,7 +67,7 @@ jobs:
       matrix:
         IMAGES:
         - "corpusops/postgres/16 corpusops/postgres/latest corpusops/postgis/16 corpusops/postgis/16-3 corpusops/postgis/latest"
-        - "corpusops/elasticsearch/5 corpusops/elasticsearch/5.6 corpusops/elasticsearch/6.8.23 corpusops/elasticsearch/7.14.2 corpusops/elasticsearch/7.17.24 corpusops/elasticsearch/8.15.1 corpusops/elasticsearch/latest"
+        - "corpusops/elasticsearch/5 corpusops/elasticsearch/5.6 corpusops/elasticsearch/6.8.23 corpusops/elasticsearch/7.14.2 corpusops/elasticsearch/7.17.24 corpusops/elasticsearch/8.15.1"
         - "corpusops/mariadb/10 corpusops/mariadb/10.2 corpusops/mariadb/10.3 corpusops/mariadb/10.4 corpusops/mariadb/10.5 corpusops/mariadb/10.6 corpusops/mariadb/10.7 corpusops/mariadb/10.8 corpusops/mariadb/10.9"
         - "corpusops/mariadb/11 corpusops/mariadb/11.0 corpusops/mariadb/11.1 corpusops/mariadb/11.2 corpusops/mariadb/11.3 corpusops/mariadb/11.4 corpusops/mariadb/11.5 corpusops/mariadb/latest corpusops/mariadb/lts"
         - "corpusops/mongo/4 corpusops/mongo/5"
